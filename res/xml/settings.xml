@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<CheckBoxPreference android:key="autosave"
+		android:title="@string/autosave" android:summary="@string/autosave_summary"
+		android:defaultValue="true" />
+	<CheckBoxPreference android:key="autoload"
+		android:title="@string/autoload" android:summary="@string/autoload_summary"
+		android:defaultValue="true" />
+	<CheckBoxPreference android:key="sdcarduse"
+		android:title="@string/sdcarduse" android:summary="@string/sdcarduse_summary"
+		android:defaultValue="true" />
+	<CheckBoxPreference android:key="gmailuse"
+		android:title="Send mail by GMail" android:defaultValue="false"
+		android:summary="Do you want to send mail using gmail?" />
+	<PreferenceCategory android:title="GMail Account"
+		android:dependency="gmailuse" android:enabled="false" android:key="GoogleAccountInfo">
+		<EditTextPreference android:key="username"
+			android:defaultValue="jeongjaehong@gmail.com" android:title="Google Account"
+			android:summary="GMail Address ( userid@gmail.com )"
+			android:dependency="gmailuse" />
+		<EditTextPreference android:key="password"
+			android:password="true" android:defaultValue="" android:title="Password"
+			android:summary="Google Account Password" android:dependency="gmailuse" />
+	</PreferenceCategory>
+	<ListPreference android:key="fontsize"
+		android:title="@string/title_list_preference" android:summary="@string/summary_list_preference"
+		android:entries="@array/entries_list_preference" android:entryValues="@array/entryvalues_list_preference"
+		android:dialogTitle="@string/dialog_title_list_preference" />
+	<CheckBoxPreference android:key="autoread"
+		android:title="@string/autoread" android:summary="@string/autoread_summary"
+		android:defaultValue="false" />
+	<CheckBoxPreference android:key="compare"
+		android:title="역본비교" android:defaultValue="true" android:summary="역본을 비교해서 보시겠습니까?" />
+	<CheckBoxPreference android:key="fullscr"
+		android:title="전체화면" android:defaultValue="false"
+		android:summary="성경읽기창을 전체화면으로 확대해서사용하시겠습니까?" />
+	<CheckBoxPreference android:key="theme"
+		android:title="위젯 글자 색상" android:defaultValue="false"
+		android:summary="위젯의 글자색상을 검정색으로 사용하시겠습니까?" />
+</PreferenceScreen>

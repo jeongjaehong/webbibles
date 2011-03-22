@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/biblecontents" android:layout_width="fill_parent"
+	android:layout_height="fill_parent" android:orientation="horizontal"
+	android:padding="5sp">
+	<TextView android:id="@+id/rowidcolon1" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="["
+		android:textColor="@color/orange_color" />
+
+	<TextView android:id="@+id/modified_date"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:layout_toRightOf="@id/rowidcolon1" android:ellipsize="none"
+		android:singleLine="true" android:textStyle="italic" android:textSize="15sp" />
+
+	<TextView android:id="@+id/rowidcolon2" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="] "
+		android:textColor="@color/orange_color" android:layout_toRightOf="@id/modified_date" />
+
+	<TextView android:id="@+id/versestr" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:layout_toRightOf="@id/rowidcolon2"
+		android:textSize="18sp" />
+
+</RelativeLayout>
+
+

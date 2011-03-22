@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+	
+<resources>
+	<color name="versestr_color">#ffEF9221</color>	
+	<color name="orange_color">#abff7921</color>		
+	<color name="skyblue_color">#ff528EFF</color>	
+	<color name="white_font">#ffffffFF</color>	
+	<color name="black_font">#ff000000</color>
+</resources>

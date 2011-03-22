@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res/org.nilriri.webbibles"
+	android:layout_width="fill_parent" android:layout_height="fill_parent">
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical" android:padding="3dip"
+		android:layout_width="fill_parent" android:layout_height="wrap_content">
+
+		<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/biblecontents" android:layout_width="fill_parent"
+			android:layout_height="fill_parent" android:orientation="horizontal"
+			android:padding="2sp" android:theme="@android:style/Theme.Light">
+			<Spinner android:id="@+id/books" style="?android:attr/buttonStyleSmall"
+				android:entries="@array/all_testment" android:layout_width="150dip"
+				android:layout_height="wrap_content" />
+			<Spinner android:id="@+id/chapters" style="?android:attr/buttonStyleSmall"
+				android:entries="@array/all_testment" android:layout_width="60dip"
+				android:layout_height="wrap_content" android:layout_toRightOf="@id/books" />
+			<Spinner android:id="@+id/verses" style="?android:attr/buttonStyleSmall"
+				android:entries="@array/all_testment" android:layout_width="60dip"
+				android:layout_height="wrap_content" android:layout_toRightOf="@id/chapters" />
+		</RelativeLayout>
+
+
+
+		<ListView android:id="@+id/ContentsListView"
+			android:fastScrollEnabled="true" android:choiceMode="multipleChoice"
+			android:focusable="false" android:focusableInTouchMode="false"
+			android:layout_height="wrap_content" android:layout_width="wrap_content"
+			android:paddingBottom="0dip" android:theme="@android:style/Theme.Light">
+		</ListView>
+
+	</LinearLayout>
+	<!--
+		LinearLayout android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"> <FrameLayout
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:layout_weight="1" /> <com.livepoint.smartad.sdk.SmartAdView
+		android:id="@+id/ad_view" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" app:view_mode="bottom" />
+		</LinearLayout
+	-->
+</FrameLayout>
+	

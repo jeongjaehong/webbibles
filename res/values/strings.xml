@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<resources>
+
+	<string name="menu_previous">이전성경</string>
+	<string name="menu_next">다음성경</string>
+	<string name="menu_save">저장하기</string>
+	<string name="menu_loadweb">인터넷에서 다운받기</string>
+	<string name="menu_loaddb">메모리에서 읽어오기</string>
+	<string name="menu_notelist">노트 목록</string>
+
+	<string name="menu_bookmarklist">책갈피 목록</string>
+	<string name="menu_auto_load">Auto Download</string>
+	
+
+	<string name="menu_allnote">전체 노트</string>
+	<string name="menu_booksnote">성경별 노트</string>
+	<string name="menu_daysnote">날짜별 노트</string>
+	<string name="menu_addnote">노트추가</string>
+	<string name="menu_sendsms">SMS전송</string>
+	<string name="menu_schedulesms">SMS예약전송</string>
+	<string name="menu_addmark">책갈피 추가</string>
+	<string name="menu_deletenote">노트 삭제</string>
+	<string name="menu_deletemark">북마크 삭제</string>
+	<string name="menu_editnote">노트 수정</string>
+	<string name="menu_copybible">성구인용</string>
+	<string name="menu_bibleview">성경읽기</string>
+	<string name="menu_datamanager">데이터관리</string>
+	<string name="menu_sendmail">메일보내기</string>
+
+	<string name="menu_favorites">즐겨찾기 추가</string>
+	<string name="menu_changegroup">즐겨찾기 그룹변경</string>
+	<string name="menu_deletegroup">즐겨찾기 그룹삭제</string>
+	<string name="menu_delfavorite">즐겨찾기 삭제</string>
+	<string name="menu_favorite_list">즐겨찾기 목록</string>
+
+	<string name="select_favorites_group">그룹 선택</string>
+
+
+
+
+	<string name="song_title">찬송가</string>
+	<string name="title_bookmark">책갈피</string>
+	<string name="title_favorites">즐겨찾기</string>
+
+	<string name="title_notelist">노트 목록</string>
+	<string name="title_marklist">책갈피 목록</string>
+	<string name="title_searchresult">검색 결과</string>
+	<string name="title_favorite_group">즐겨찾기 그룹 추가...</string>
+
+	<string name="title_editnote">노트 수정</string>
+	<string name="title_newnote">노트 추가</string>
+	<string name="title_biblenote">성경 노트</string>
+	<string name="title_edit_title">노트 제목</string>
+	<string name="title_datamanager">데이터 관리자</string>
+	<string name="title_databackup">자료 백업</string>
+	<string name="title_datarestore">자료 복원</string>
+	<string name="title_deletebible">자료 삭제</string>
+	<string name="title_datadownload">자료 다운로드</string>
+	<string name="title_versionselector">역본 선택하기</string>
+	<string name="title_sendmail">메일 보내기</string>
+
+
+	<string name="new_init_title">제목없음</string>
+
+	<string name="btn_manage">관리</string>
+	<string name="btn_search">검색</string>
+	<string name="btn_prev">이전</string>
+	<string name="btn_next">다음</string>
+	<string name="btn_start">시작</string>
+	<string name="btn_allcheck">전체</string>
+	<string name="btn_sendmail">메일 보내기</string>
+
+	<string name="lbl_searchinfo">* 다운받거나 작성된 노트를 대상으로 검색합니다. *</string>
+	<string name="lbl_searchtarget">검색 대상</string>
+	<string name="lbl_searchkeyword">찾을 단어</string>
+	<string name="title_searchdata">자료 검색</string>
+
+
+	<string name="menu_revertnote">수정 취소</string>
+	<string name="menu_discard">작업 취소</string>
+	<string name="menu_datasearch">자료 검색(오프라인 검색)</string>
+
+
+
+
+
+
+
+
+
+
+	<string name="app_name">온라인 성경</string>
+	<string name="app_caption">온라인 성경</string>
+	<string name="app_version">Ver 3.2.x</string>
+
+	<string name="button_ok">확인</string>
+	<string name="btn_About">정보</string>
+
+	<string name="emptyString"></string>
+
+	<string name="save_successful">저장 되었음</string>
+	<string name="load_db_msg">메모리에서 ...</string>
+	<string name="not_found_msg">메모리에서 찾을 수 없습니다.</string>
+
+
+
+
+
+	<!-- 옵션설정관련 -->
+	<string name="autosave">자동 저장</string>
+	<string name="autosave_summary">조회된 내용을 메모리에 자동 저장할까요?</string>
+
+	<string name="autoread">마지막위치 저장</string>
+	<string name="autoread_summary">마지막위치를 저장하고 다음에 자동으로 이동할까요?</string>
+
+	<string name="autoload">자동 불러오기</string>
+	<string name="autoload_summary">저장된 내역이 없을경우 인터넷에서 자동 다운로드를 시도할까요?</string>
+
+	<string name="sdcarduse">메모리사용</string>
+	<string name="sdcarduse_summary">데이터를 외부 메모리에 저장하시겠습니까?</string>
+	<string name="sdcarduse_notinstall">외부 메모리를 사용할 수 없는 상태입니다.</string>
+
+	<string name="widget_label_4x2">온라인성경(4x2)</string>
+	
+	<string name="widget_desc">온라인성경 - 즐겨찾기 위젯</string>
+
+	<string name="settings_label">설정...</string>
+	<string name="settings_title">설정</string>
+	<string name="settings_shortcut">s</string>
+
+	<string name="title_list_preference">글씨 크기</string>
+	<string name="summary_list_preference">성경읽기 화면의 글씨크기를 지정하십시오.</string>
+	<string name="dialog_title_list_preference">성경읽기 화면 글씨 크기</string>
+
+</resources>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res/org.nilriri.webbibles"
+	android:layout_width="fill_parent" android:layout_height="fill_parent">
+	<!-- android:paddingBottom="45dip" -->
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical" 
+		android:layout_width="fill_parent" android:layout_height="wrap_content">
+
+
+		<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:layout_gravity="center">
+
+			<ImageView android:id="@+id/app_icons" android:src="@drawable/background"
+				android:scaleType="fitXY" android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:adjustViewBounds="true" />
+
+
+			<ImageView android:layout_height="wrap_content" android:id="@+id/app_icons"
+				android:src="@drawable/c3tv" android:adjustViewBounds="true"
+				android:layout_width="wrap_content" android:maxWidth="100dip"
+				android:maxHeight="50dip" android:scaleType="centerInside" />
+
+			<TextView android:id="@+id/blank_line0" android:gravity="left"
+				android:layout_below="@id/app_icons" android:layout_width="wrap_content"
+				android:layout_height="10dip" />
+
+
+
+			<ImageView android:layout_height="wrap_content" android:id="@+id/app_caption"
+				android:src="@drawable/title" android:adjustViewBounds="true"
+				android:layout_width="wrap_content" android:maxWidth="300dip"
+				android:maxHeight="50dip" android:scaleType="centerInside"
+				android:layout_below="@id/blank_line0" android:gravity="center"
+				android:layout_centerHorizontal="true" />
+
+
+
+
+
+
+			<!-- 버젼 -->
+
+			<TextView android:layout_height="wrap_content" android:id="@+id/app_version"
+				android:text="@string/app_version" android:layout_width="wrap_content"
+				android:textSize="15sp" android:textStyle="italic" android:gravity="right"
+				android:textColor="@color/white_font" android:layout_toRightOf="@id/app_caption"
+				android:layout_below="@id/app_caption" />
+
+			<!-- 로고이미지 -->
+
+			<ImageView android:layout_height="wrap_content" android:id="@+id/logoimg"
+				android:src="@drawable/logo" android:layout_width="wrap_content"
+				android:layout_marginRight="10dip" android:scaleType="centerInside"
+				android:layout_below="@id/app_version" android:gravity="center"
+				android:layout_gravity="center" android:adjustViewBounds="true"
+				android:layout_centerInParent="true" />
+			<!-- 빈줄 -->
+			<TextView android:id="@+id/blank_line1" android:gravity="left"
+				android:layout_below="@id/logoimg" android:layout_width="wrap_content"
+				android:text=" " android:textSize="15sp" android:layout_height="20dip" />
+
+
+
+
+			<Spinner android:id="@+id/spinsong" android:layout_height="wrap_content"
+				style="?android:attr/buttonStyleSmall" android:layout_width="100dip"
+				android:layout_below="@id/spinner2" android:layout_toLeftOf="@id/spinner2"
+				android:visibility="gone" />
+
+			<Spinner android:id="@+id/spinsong2" android:layout_height="wrap_content"
+				style="?android:attr/buttonStyleSmall" android:layout_width="100dip"
+				android:layout_below="@id/spinner2" android:layout_alignRight="@id/spinbible"
+				android:visibility="gone" />
+
+			<Spinner android:id="@+id/spinsong" 
+				android:layout_height="wrap_content" style="?android:attr/buttonStyleSmall"
+				android:layout_width="75dip" 
+				 android:visibility="gone"/>
+
+
+
+
+
+			<!-- 버튼 백그라운드 -->
+			<ImageView android:id="@+id/menubar" android:src="@drawable/bottom"
+				android:adjustViewBounds="true" android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:scaleType="centerInside"
+				android:layout_alignParentBottom="true" />
+
+			<Spinner android:id="@+id/spinbookmark"
+				android:layout_height="wrap_content" style="?android:attr/buttonStyleSmall"
+				android:layout_width="75dip" android:layout_above="@id/menubar"
+				android:layout_alignParentRight="true" android:layout_marginRight="5dip" />
+
+			<Spinner android:id="@+id/spinbible2" android:layout_height="wrap_content"
+				style="?android:attr/buttonStyleSmall" android:layout_above="@id/spinbookmark"
+				android:layout_toLeftOf="@id/spinner" android:layout_width="75dip" />
+
+			<Spinner android:id="@+id/spinbible" android:layout_height="wrap_content"
+				style="?android:attr/buttonStyleSmall" android:layout_above="@id/spinbookmark"
+				android:layout_toLeftOf="@id/spinbible2" android:layout_width="75dip" />
+
+			<Spinner android:id="@+id/spinner" android:layout_height="wrap_content"
+				style="?android:attr/buttonStyleSmall" android:layout_above="@id/spinbookmark"
+				android:layout_toLeftOf="@id/spinner2" android:layout_width="75dip" />
+
+			<Spinner android:id="@+id/spinner2" android:layout_height="wrap_content"
+				style="?android:attr/buttonStyleSmall" android:layout_above="@id/spinbookmark"
+				android:layout_alignParentRight="true" android:layout_marginRight="5dip"
+				android:layout_width="75dip" />
+
+			<Spinner android:id="@+id/spinfavo" android:layout_height="wrap_content"
+				style="?android:attr/buttonStyleSmall" android:layout_above="@id/menubar"
+				android:layout_width="75dip" android:layout_toLeftOf="@id/spinbookmark" />
+
+			<Button android:id="@+id/btn_goto" android:text="Go..."
+				android:layout_width="75dip" android:layout_above="@id/menubar"
+				android:layout_height="wrap_content" android:visibility="visible"
+				style="?android:attr/buttonStyleSmall" android:layout_toLeftOf="@id/spinfavo" />
+
+			<Button android:id="@+id/btn_song" android:text="찬송"
+				android:layout_height="wrap_content" style="?android:attr/buttonStyleSmall"
+				android:layout_width="75dip" android:layout_above="@id/menubar"
+				android:layout_toLeftOf="@id/btn_goto" />
+
+			<!-- 하단 관리메뉴 -->
+
+			<ImageView android:id="@+id/btn_search" android:src="@drawable/search"
+				android:adjustViewBounds="true" android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:scaleType="centerInside"
+				android:layout_alignParentBottom="true" />
+
+			<ImageView android:id="@+id/split1" android:src="@drawable/split"
+				android:adjustViewBounds="true" android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:layout_toRightOf="@id/btn_search"
+				android:scaleType="centerInside" android:layout_alignParentBottom="true" />
+
+
+			<ImageView android:id="@+id/btn_manage" android:src="@drawable/manage"
+				android:adjustViewBounds="true" android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:layout_toRightOf="@id/split1"
+				android:scaleType="centerInside" android:layout_alignParentBottom="true" />
+
+			<ImageView android:id="@+id/split2" android:src="@drawable/split"
+				android:adjustViewBounds="true" android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:layout_toRightOf="@id/btn_manage"
+				android:scaleType="centerInside" android:layout_alignParentBottom="true" />
+
+
+			<ImageView android:id="@+id/btn_About" android:src="@drawable/info"
+				android:adjustViewBounds="true" android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:layout_toRightOf="@id/split2"
+				android:scaleType="centerInside" android:layout_alignParentBottom="true" />
+		</RelativeLayout>
+	</LinearLayout>
+<!-- 
+	<LinearLayout android:orientation="vertical"
+		android:layout_width="fill_parent" android:layout_height="fill_parent">
+		<FrameLayout android:layout_width="fill_parent"
+			android:layout_height="fill_parent" android:layout_weight="1" />
+		<com.livepoint.smartad.sdk.SmartAdView
+			android:id="@+id/ad_view" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" app:view_mode="bottom" />
+	</LinearLayout>
+ -->
+</FrameLayout>
+
