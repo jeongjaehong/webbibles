@@ -44,6 +44,9 @@ public class Prefs extends PreferenceActivity {
 
     private static final String OPT_THEME = "theme";
     private static final boolean OPT_THEME_DEF = false;
+    
+    private static final String OPT_CALENDAR = "calendar";
+    private static final boolean OPT_CALENDAR_DEF = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +133,10 @@ public class Prefs extends PreferenceActivity {
 
     public static String getGMailPassword(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(OPT_GMAILPASSWORD, OPT_GMAILPASSWORD_DEF);
+    }
+    
+    public static boolean getCalendar(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(OPT_CALENDAR, OPT_CALENDAR_DEF);
     }
 
 }

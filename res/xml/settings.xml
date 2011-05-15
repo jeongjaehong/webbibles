@@ -38,4 +38,7 @@
 	<CheckBoxPreference android:key="theme"
 		android:title="위젯 글자 색상" android:defaultValue="false"
 		android:summary="위젯의 글자색상을 검정색으로 사용하시겠습니까?" />
+	<CheckBoxPreference android:key="calendar"
+		android:title="Calendar 사용" android:defaultValue="true"
+		android:summary="Calendar를 이용하여 맥체인성경읽기 표를 사용하시려면 선택하십시오." />
 </PreferenceScreen>

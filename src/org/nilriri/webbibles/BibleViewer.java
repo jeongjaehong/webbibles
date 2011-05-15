@@ -248,28 +248,26 @@ public class BibleViewer extends Activity implements OnTouchListener {
                     mVerse = 0;
                 }
 
-                if (mCheck.size() >= 2) {
+                if (!mCheck.contains(id)) {
+                    mCheck.add(id);
+
+                    //view.findViewById(R.id.biblecontents).setSelected(true);//.setBackgroundColor(android.R.color.background_dark);
+                    view.findViewById(R.id.flag).setVisibility(View.VISIBLE);
+
+                } else {//if (mCheck.contains(id)) {
+                    mCheck.remove(id);
+
+                    // view.findViewById(R.id.biblecontents).setSelected(false);//.setBackgroundColor(android.R.color.background_light);
+                    view.findViewById(R.id.flag).setVisibility(View.INVISIBLE);
+
+                }
+                if (mCheck.size() > 2) {
                     Toast.makeText(BibleViewer.this, "두개 이상 선택불가.(시작과 끝만 지정)", Toast.LENGTH_LONG).show();
                     mCheck.remove(id);
 
                     // view.findViewById(R.id.biblecontents).setSelected(false);//.setBackgroundColor(android.R.color.background_light);
                     view.findViewById(R.id.flag).setVisibility(View.INVISIBLE);
 
-                } else {
-
-                    if (!mCheck.contains(id)) {
-                        mCheck.add(id);
-
-                        //view.findViewById(R.id.biblecontents).setSelected(true);//.setBackgroundColor(android.R.color.background_dark);
-                        view.findViewById(R.id.flag).setVisibility(View.VISIBLE);
-
-                    } else {//if (mCheck.contains(id)) {
-                        mCheck.remove(id);
-
-                        // view.findViewById(R.id.biblecontents).setSelected(false);//.setBackgroundColor(android.R.color.background_light);
-                        view.findViewById(R.id.flag).setVisibility(View.INVISIBLE);
-
-                    }
                 }
 
                 Log.e(TAG, "select verse====" + mVerse);
@@ -559,7 +557,7 @@ public class BibleViewer extends Activity implements OnTouchListener {
         }
 
         private boolean parsingBibleSource(String HTMLSource) {
-           
+
             Log.d(TAG, "RegExpr Result^^ = " + HTMLSource);
             HTMLSource = HTMLSource.substring(HTMLSource.indexOf("<td id=\"tdBible1\""));
             Log.d(TAG, "RegExpr Result&& = " + HTMLSource);
@@ -571,21 +569,20 @@ public class BibleViewer extends Activity implements OnTouchListener {
             //HTMLSource = HTMLSource.substring(HTMLSource.indexOf(">") + 1);
             HTMLSource = HTMLSource.substring(0, HTMLSource.indexOf("/td>") - 1);
             Log.d(TAG, "RegExpr Result11 = " + HTMLSource);
-            
-            
+
             HTMLSource = HTMLSource.replace("<br>", "\n");
             HTMLSource = HTMLSource.replace("<BR>", "\n");
             HTMLSource = HTMLSource.replace("&nbsp;&nbsp;&nbsp;", "##");
             Log.d(TAG, "RegExpr Result22 = " + HTMLSource);
-           /* while (HTMLSource.indexOf("<div") >= 0 && HTMLSource.indexOf(">", HTMLSource.indexOf("<div")) >= 0) {
+            /* while (HTMLSource.indexOf("<div") >= 0 && HTMLSource.indexOf(">", HTMLSource.indexOf("<div")) >= 0) {
 
-                String target = HTMLSource.substring(HTMLSource.indexOf("<div"), HTMLSource.indexOf(">", HTMLSource.indexOf("<div")) + 1);
-                HTMLSource = HTMLSource.replace(target, "( ");
+                 String target = HTMLSource.substring(HTMLSource.indexOf("<div"), HTMLSource.indexOf(">", HTMLSource.indexOf("<div")) + 1);
+                 HTMLSource = HTMLSource.replace(target, "( ");
 
-            }
-            HTMLSource = HTMLSource.replace("</div>", " )");
-            
-*/
+             }
+             HTMLSource = HTMLSource.replace("</div>", " )");
+             
+            */
             Matcher matcher = Pattern.compile("<(\"[^\"]*\"|'[^']*'|[^'\">])*>").matcher("");
 
             StringBuffer result = new StringBuffer();

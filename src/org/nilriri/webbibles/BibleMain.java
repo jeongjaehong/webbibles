@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 public class BibleMain extends Activity implements OnClickListener {
@@ -494,16 +495,41 @@ public class BibleMain extends Activity implements OnClickListener {
                 break;
 
             case R.id.btn_goto:
-                //intent.setClass(getBaseContext(), BibleViewer.class);
-                intent.setAction(Common.ACTION_BIBLEVIEW);
-                intent.setType("vnd.org.nilriri/web-bible");
 
-                intent.putExtra("VERSION", getPreferences(MODE_PRIVATE).getInt(BIBLE_VERSION, 0));
-                intent.putExtra("VERSION2", getPreferences(MODE_PRIVATE).getInt(BIBLE_VERSION2, 0));
-                intent.putExtra("BOOK", PreferenceManager.getDefaultSharedPreferences(this).getInt(BOOK, 0));
-                intent.putExtra("CHAPTER", PreferenceManager.getDefaultSharedPreferences(this).getInt(CHAPTER, 0));
-                intent.putExtra("VERSE", PreferenceManager.getDefaultSharedPreferences(this).getInt(VERSE, 0));
-                startActivity(intent);
+                try {
+
+                    if (Prefs.getCalendar(this)) {
+                        intent.setAction("org.nilriri.lunarcalendar.MAIN");
+                        intent.setType("vnd.org.nilriri/lunarcalendar");
+                        intent.putExtra("BIBLEPLAN", true);
+                        
+                    } else {
+
+                        //intent.setClass(getBaseContext(), BibleViewer.class);
+                        intent.setAction(Common.ACTION_BIBLEVIEW);
+                        intent.setType("vnd.org.nilriri/web-bible");
+
+                        intent.putExtra("VERSION", getPreferences(MODE_PRIVATE).getInt(BIBLE_VERSION, 0));
+                        intent.putExtra("VERSION2", getPreferences(MODE_PRIVATE).getInt(BIBLE_VERSION2, 0));
+                        intent.putExtra("BOOK", PreferenceManager.getDefaultSharedPreferences(this).getInt(BOOK, 0));
+                        intent.putExtra("CHAPTER", PreferenceManager.getDefaultSharedPreferences(this).getInt(CHAPTER, 0));
+                        intent.putExtra("VERSE", PreferenceManager.getDefaultSharedPreferences(this).getInt(VERSE, 0));
+                    }
+
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Toast.makeText(getBaseContext(), "LunarCalendar 음력달력 앱이 설치되어있지 않거나 최신버젼이 아닙니다.", Toast.LENGTH_LONG).show();
+                    intent = new Intent();
+                    intent.setAction(Common.ACTION_BIBLEVIEW);
+                    intent.setType("vnd.org.nilriri/web-bible");
+
+                    intent.putExtra("VERSION", getPreferences(MODE_PRIVATE).getInt(BIBLE_VERSION, 0));
+                    intent.putExtra("VERSION2", getPreferences(MODE_PRIVATE).getInt(BIBLE_VERSION2, 0));
+                    intent.putExtra("BOOK", PreferenceManager.getDefaultSharedPreferences(this).getInt(BOOK, 0));
+                    intent.putExtra("CHAPTER", PreferenceManager.getDefaultSharedPreferences(this).getInt(CHAPTER, 0));
+                    intent.putExtra("VERSE", PreferenceManager.getDefaultSharedPreferences(this).getInt(VERSE, 0));
+                    startActivity(intent);
+                }
 
                 break;
 
