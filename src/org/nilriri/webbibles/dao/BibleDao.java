@@ -320,6 +320,29 @@ public class BibleDao extends AbstractDao {
 
     }
 
+    public Cursor queryVerseList(int mVersion, int mBook, int mChapter) {
+
+        //SQLiteDatabase db = getReadableDatabase();
+
+        StringBuffer query = new StringBuffer();
+
+        query.append("SELECT  ");
+        query.append("  distinct a.verse as _id, a.verse + 1 as verse   ");
+        query.append("FROM " + Bibles.VERSION_TABLE_NAME[mVersion] + " a ");
+        query.append("WHERE a." + Bibles.VERSION + " = ? ");
+        query.append("AND a." + Bibles.BOOK + " = ? ");
+        query.append("AND a." + Bibles.CHAPTER + " = ? ");
+
+        String selectionArgs[] = new String[] { mVersion + "", mBook + "", mChapter + "" };
+
+        //Log.d("InternalDao-queryExistsSchedule", "query=" + query.toString());
+
+        //Cursor cursor = 
+
+        return getReadableDatabase().rawQuery(query.toString(), selectionArgs);
+
+    }
+
     public Cursor queryContents(int mVersion, int mBook, int mChapter) {
 
         //SQLiteDatabase db = getReadableDatabase();
@@ -382,7 +405,80 @@ public class BibleDao extends AbstractDao {
 
     }
 
-    public Cursor querySearchContents(int searchVersion, int searchTestment, int searchOperator, String searchKeyword1, String searchKeyword2) {
+    public Cursor querySearchSummary(int searchVersion, int searchTestment, int searchOperator, String searchKeyword1, String searchKeyword2) {
+
+        //SQLiteDatabase db = getReadableDatabase();
+
+        Log.d("InternalDao-querySearchContents", "searchVersion=" + searchVersion);
+        StringBuffer query = new StringBuffer();
+
+        if (searchTestment >= 1) {
+            query.append("SELECT  ");
+            query.append("  count(distinct c.book) ||'권의 성경 '|| count(distinct c.book || '-' || c.chapter) || '개의 구절 찾음.' result ");
+            query.append("FROM " + Bibles.VERSION_TABLE_NAME[searchVersion] + " c ");
+        } else {
+            query.append("SELECT  ");
+            query.append("  '전체 ' || count(*) ||'개의 자료찾음.' result ");
+            query.append("FROM " + Notes.NOTE_TABLE_NAME + " c ");
+        }
+
+        query.append("WHERE 1 = 1 ");
+
+        switch (searchTestment) {
+            case -1: // null
+            case 0: // note
+                break;
+            case 1: // subject
+                query.append("  AND cast(c." + Bibles.VERSE + " as integer) <= 0 ");
+                break;
+            case 2: // all
+                query.append("  AND c." + Bibles.BOOK + " >= 0 ");
+                break;
+            case 3: // old
+                query.append("  AND c." + Bibles.BOOK + " < 39 ");
+                query.append("  AND cast(c." + Bibles.VERSE + " integer) > 0 ");
+                break;
+            case 4: // new
+                query.append("  AND c." + Bibles.BOOK + " >= 39 ");
+                break;
+            default: // single testment
+                query.append("  AND c." + Bibles.BOOK + " = " + (searchTestment - 5));
+                break;
+        }
+
+        switch (searchOperator) {
+            case 0: // and
+                if (!"".equals(searchKeyword1))
+                    query.append("  AND c." + Bibles.CONTENTS + " LIKE " + "'%" + searchKeyword1 + "%'");
+                if (!"".equals(searchKeyword2))
+                    query.append("  AND c." + Bibles.CONTENTS + " LIKE " + "'%" + searchKeyword2 + "%'");
+                break;
+            case 1: // or
+                if (!"".equals(searchKeyword1) && !"".equals(searchKeyword2)) {
+                    query.append("  AND (c." + Bibles.CONTENTS + " LIKE " + "'%" + searchKeyword1 + "%'");
+                    query.append("  OR c." + Bibles.CONTENTS + " LIKE " + "'%" + searchKeyword2 + "%')");
+                } else if (!"".equals(searchKeyword1) && "".equals(searchKeyword2)) {
+                    query.append("  AND c." + Bibles.CONTENTS + " LIKE " + "'%" + searchKeyword1 + "%'");
+                }
+                break;
+            case 2: // not
+                if (!"".equals(searchKeyword1) && !"".equals(searchKeyword2)) {
+                    query.append("  AND c." + Bibles.CONTENTS + " LIKE " + "'%" + searchKeyword1 + "%'");
+                    query.append("  AND c." + Bibles.CONTENTS + " NOT LIKE " + "'%" + searchKeyword2 + "%'");
+                } else if (!"".equals(searchKeyword1) && "".equals(searchKeyword2)) {
+                    query.append("  AND c." + Bibles.CONTENTS + " LIKE " + "'%" + searchKeyword1 + "%'");
+                }
+                break;
+
+        }
+
+        Log.d("InternalDao-querySearchContents", "query=" + query.toString());
+
+        return getReadableDatabase().rawQuery(query.toString(), null);
+
+    }
+
+    public Cursor querySearchContents(int searchVersion, int searchTestment, int searchOperator, String searchKeyword1, String searchKeyword2, int totalcount) {
 
         //SQLiteDatabase db = getReadableDatabase();
 
@@ -392,7 +488,8 @@ public class BibleDao extends AbstractDao {
         query.append("SELECT  ");
         query.append("  c._id, c.vercode, c.vername, c.version, c.book, c.chapter, c.verse verse, ");
         query.append("  (case when c.verse > 0 then '['||b.biblename || ' ' || (c.chapter + 1) || ':' || c.verse||'] ' else '['||b.biblename || ' ' || (c.chapter + 1) || '] ' end)  ");
-        query.append("  || c.contents contents, '' empty ");
+        //query.append("  || c.contents as contents, '' empty ");
+       query.append("  || replace(replace(c.contents, '"+searchKeyword1+"', '<"+searchKeyword1+">'), '"+searchKeyword2+"', '<"+searchKeyword2+">') as contents, '' empty ");
 
         if (searchTestment >= 1) {
             query.append("FROM " + Bibles.VERSION_TABLE_NAME[searchVersion] + " c ");
@@ -452,7 +549,8 @@ public class BibleDao extends AbstractDao {
 
         }
 
-        query.append("  LIMIT 100 ");
+        query.append(" ORDER BY 1 ");
+        query.append(" limit 500  ");
 
         Log.d("InternalDao-querySearchContents", "query=" + query.toString());
 

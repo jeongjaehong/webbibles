@@ -843,6 +843,8 @@ public class BibleViewer extends Activity implements OnTouchListener {
             }
         }
 
+        mCheck.clear();
+
         Spinner verse_spinner = (Spinner) findViewById(R.id.verses);
 
         if (mVerse < 0)
@@ -1193,8 +1195,12 @@ public class BibleViewer extends Activity implements OnTouchListener {
         }
 
         if (mList2.size() > 0) {
+
+            Cursor c = dao.queryVerseList(mVersion, mBook, mChapter);
+
             Spinner spin_verse = (Spinner) findViewById(R.id.verses);
-            SimpleAdapter adapter_verse = new SimpleAdapter(getBaseContext(), mList2, android.R.layout.simple_spinner_item, new String[] { "Number" }, new int[] { android.R.id.text1 });
+            SimpleCursorAdapter adapter_verse = new SimpleCursorAdapter(BibleViewer.this, android.R.layout.simple_spinner_item, c, new String[] { "verse" }, new int[] { android.R.id.text1 });
+            //SimpleAdapter adapter_verse = new SimpleAdapter(getBaseContext(), mList2, android.R.layout.simple_spinner_item, new String[] { "Number" }, new int[] { android.R.id.text1 });
             adapter_verse.setDropDownViewResource(android.R.layout.simple_spinner_item);
             spin_verse.setAdapter(adapter_verse);
         }
