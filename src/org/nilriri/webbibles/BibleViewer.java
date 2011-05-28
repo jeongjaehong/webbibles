@@ -216,14 +216,50 @@ public class BibleViewer extends Activity implements OnTouchListener {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(Common.TAG, "============onResume========");
+        if (getIntent().hasExtra("BPLANT")) {
+            String names[] = getIntent().getStringArrayExtra("BPLANT");
+            final String indexs[] = getIntent().getStringArrayExtra("BPLANI");
 
-        this.ReloadBibleContents();
+            if (names.length > 0) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("읽을 성경을 선택하십시오.");
+                builder.setItems(names, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        try {
+
+                            Log.d(Common.TAG, "============onClick========" + which);
+                            String index = indexs[which].replace("bindex:", "");
+                            String data[] = Common.tokenFn(index, ",");
+
+                            Log.d(Common.TAG, "==============" + which);
+
+                            mBook = Integer.parseInt(data[0]);
+                            mChapter = Integer.parseInt(data[1]);
+
+                            ((Spinner) findViewById(R.id.books)).setSelection(mBook);
+
+                            ReloadBibleContents();
+                        } catch (Exception e) {
+                            Log.d(Common.TAG, "error=" + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }
+                }).show();
+
+            }
+        } else {
+            Log.d(Common.TAG, "============ReloadBibleContents========");
+            this.ReloadBibleContents();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
+        Log.d(Common.TAG, "============onPause========");
         PreferenceManager.getDefaultSharedPreferences(this).edit().putInt(BOOK, ((Spinner) findViewById(R.id.books)).getSelectedItemPosition()).commit();
         PreferenceManager.getDefaultSharedPreferences(this).edit().putInt(CHAPTER, ((Spinner) findViewById(R.id.chapters)).getSelectedItemPosition()).commit();
         PreferenceManager.getDefaultSharedPreferences(this).edit().putInt(VERSE, this.mVerse).commit();
@@ -790,6 +826,7 @@ public class BibleViewer extends Activity implements OnTouchListener {
 
     private void ReloadChapterList() {
 
+        Log.e(TAG, "===============ReloadChapterList====");
         //String chapterlist[] = getResources().getStringArray(R.array.chapterlist1);
 
         //String chapter[] = Common.tokenFn(chapterlist[mBook], ",");
@@ -829,6 +866,8 @@ public class BibleViewer extends Activity implements OnTouchListener {
     }
 
     private void ReloadBibleContents() {
+
+        Log.d(Common.TAG, "error=version" + mVersion + ", book=" + mBook + ", chapter=" + mChapter);
 
         if (dao.queryExistsContents(mVersion, mBook, mChapter)) {
 
