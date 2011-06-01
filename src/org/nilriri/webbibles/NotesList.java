@@ -368,7 +368,7 @@ public class NotesList extends Activity implements OnClickListener {
 
         MenuItem item1 = menu.add(0, MENU_ITEM_BIBLEVIEW, 0, R.string.menu_bibleview);
         item1.setIntent(new Intent(getBaseContext(), BibleViewer.class));
-        item1.setIcon(R.drawable.ic_menu_bible);
+        item1.setIcon(R.drawable.app_notes);
         /*
                 MenuItem item2 = menu.add(0, MENU_ITEM_EDITNOTE, 0, R.string.menu_editnote);
                 item2.setIntent(new Intent(getBaseContext(), NoteEditor.class));

@@ -2242,6 +2242,13 @@
 		<item>22</item>
 	</string-array>
 
+	<string-array name="widget_font_colors">
+		<item>orange</item>
+		<item>skyblue</item>
+		<item>white</item>
+		<item>black</item>
+	</string-array>
+
 	<string-array name="entries_list_preference">
 		<item>Font Size is 12</item>
 		<item>Font Size is 14</item>

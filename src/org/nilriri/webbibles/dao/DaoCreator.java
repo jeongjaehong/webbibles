@@ -33,6 +33,8 @@ public class DaoCreator {
         onCreateSchedule(db);
 
         onCreateSongs(db);
+
+        onCreateReading(db);
     }
 
     public void onCreateBible(SQLiteDatabase db, int start) {
@@ -53,6 +55,7 @@ public class DaoCreator {
                 query.append("    ," + Bibles.CHAPTER + " INTEGER ");
                 query.append("    ," + Bibles.VERSE + " INTEGER ");
                 query.append("    ," + Bibles.CONTENTS + " VARCHAR ");
+                query.append("    ," + Bibles.STYLE + " INTEGER ");
                 query.append("    ) ");
 
                 Log.d("onCreate", "Create....Bible Database=" + query.toString());
@@ -83,6 +86,30 @@ public class DaoCreator {
             query.append("    ," + Notes.MODIFIED_DATE + " VARCHAR ");
             query.append("    ," + Notes.SCORE + " INTEGER ");
             query.append("    ) ");
+
+            db.execSQL(query.toString());
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void onCreateReading(SQLiteDatabase db) {
+
+        StringBuffer query = null;
+        try {
+            query = new StringBuffer();
+            query.append("CREATE TABLE reading (");
+            query.append("    " + Notes._ID + " INTEGER NOT NULL ");
+            query.append("    ," + Notes.VERSION + " INTEGER ");
+            query.append("    ," + Notes.BOOK + " INTEGER ");
+            query.append("    ," + Notes.CHAPTER + " INTEGER ");
+            query.append("    ," + Notes.VERSE + " INTEGER ");
+            query.append("    ," + Notes.VERSESTR + " VARCHAR ");
+            query.append("    ," + Notes.TITLE + " VARCHAR ");
+            query.append("    ," + Notes.CONTENTS + " VARCHAR ");
+            query.append("    ," + Notes.MODIFIED_DATE + " VARCHAR ");
+            query.append("    ," + Notes.SCORE + " INTEGER ");
+            query.append("  ,  PRIMARY KEY (version, book, chapter )) ");
 
             db.execSQL(query.toString());
         } catch (Exception e) {
@@ -224,6 +251,28 @@ public class DaoCreator {
         Log.d("onCreate", "Create....Index");
     }
 
+    public void onAlterBible(SQLiteDatabase db, int start) {
+
+        StringBuffer query = null;
+
+        int limit = Bibles.VERSION_TABLE_NAME.length;
+
+        for (int i = start; i < limit; i++) {
+            query = new StringBuffer();
+            try {
+                query.append("ALTER TABLE " + Bibles.VERSION_TABLE_NAME[i] + " ");
+                query.append(" ADD " + Bibles.STYLE + " INTEGER DEFAULT 0 NOT NULL ");
+
+                Log.d("onCreate", "ALTER....Bible Database=" + query.toString());
+
+                db.execSQL(query.toString());
+            } catch (Exception e) {
+
+            }
+        }
+
+    }
+
     public void onCreateBibles(Context context, SQLiteDatabase db) {
         Log.d("onCreate", "onCreateBibles...");
 
@@ -266,6 +315,10 @@ public class DaoCreator {
                 onCreateSchedule(db);
 
                 onCreateSongs(db);
+
+                onAlterBible(db, 0);
+
+                onCreateReading(db);
                 break;
             }
         }

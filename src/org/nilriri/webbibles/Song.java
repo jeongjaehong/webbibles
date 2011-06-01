@@ -26,12 +26,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -45,10 +49,12 @@ import android.widget.AdapterView.OnItemSelectedListener;
 public class Song extends Activity implements OnClickListener {
     private final HttpClient Client = new DefaultHttpClient();
     private SongsDao dao;
-    TextView txtview;
-    TextView edt_songid;
+    private TextView txtview;
+    private TextView edt_songid;
 
     public static final int MENU_AUTO_LOAD = Menu.FIRST;
+    public static final int MENU_AUTO_RELOAD = Menu.FIRST + 1;
+    public static final int MENU_ITEM_OPENVIEW = Menu.FIRST + 2;
 
     String mTitleUrl[] = { "http://bible.c3tv.com/hymn/hymn_player_new.asp?hymn_idx=", "http://bible.c3tv.com/hymn/hymn_player.asp?hymn_idx=" };
     String mContentsUrl[] = { "http://bible.c3tv.com/hymn/hymn_text_new.asp?hymn_idx=", "http://bible.c3tv.com/hymn/hymn_text.asp?hymn_idx=" };
@@ -84,6 +90,8 @@ public class Song extends Activity implements OnClickListener {
 
         imgview.setOnClickListener(this);
 
+        songview.setOnCreateContextMenuListener(this);
+
         Intent i = getIntent();
         //mUrl = i.getStringExtra("url");
         mVersion = i.getIntExtra("version", 0);
@@ -95,13 +103,26 @@ public class Song extends Activity implements OnClickListener {
         spin_version.setOnItemSelectedListener(new VersionSelectedListener());
 
         this.setTitle(this.getResources().getString(R.string.song_title) + " " + songid + "장");
-        loadContents();
+
+        btn_next.requestFocus();
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        dao = new SongsDao(this, null, Prefs.getSDCardUse(this));
+        loadContents();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (dao != null)
+            dao.CloseDatabase();
 
     }
 
@@ -170,15 +191,30 @@ public class Song extends Activity implements OnClickListener {
             imageid = imageid.length() == 1 ? "00" + imageid : imageid;
             imageid = imageid.length() == 2 ? "0" + imageid : imageid;
 
-            Bitmap bm = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/NHYMN/" + imageid + ".gif");
-            // Log.d("xxx", "content:/" + Environment.getExternalStorageDirectory() + "/NHYMN/" + imageid + ".gif");
-            songview.setImageBitmap(bm);
+            File SDCardRoot = Environment.getExternalStorageDirectory();
+            File file = new File(SDCardRoot, "NHYMN/" + imageid + ".gif");
+
+            Log.d("WebBibles", "content:/" + Environment.getExternalStorageDirectory() + "/NHYMN/" + imageid + ".gif");
+
+            if (file.exists()) {
+                Bitmap bm = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/NHYMN/" + imageid + ".gif");
+                if (bm == null) {
+                    file.delete();
+                    this.loadImage(imageid);
+                } else if (bm.getHeight() == 0) {
+                    file.delete();
+                    this.loadImage(imageid);
+                } else {
+                    songview.setImageBitmap(bm);
+                }
+            } else {
+                this.loadImage(imageid);
+            }
         }
 
     }
 
     public class VersionSelectedListener implements OnItemSelectedListener {
-
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
             //BIBLE_DB_NAME = "";
@@ -192,7 +228,6 @@ public class Song extends Activity implements OnClickListener {
             // Do nothing. 
             mVersion = 0;
         }
-
     }
 
     private void loadContents() {
@@ -204,7 +239,6 @@ public class Song extends Activity implements OnClickListener {
         imageid = imageid.length() == 1 ? "00" + imageid : imageid;
         imageid = imageid.length() == 2 ? "0" + imageid : imageid;
 
-        dao = new SongsDao(this, null, Prefs.getSDCardUse(this));
         Cursor c = dao.querySongsText(mVersion, songid);
         TextView songtitle = (TextView) findViewById(R.id.song_title);
 
@@ -323,6 +357,8 @@ public class Song extends Activity implements OnClickListener {
 
         try {
 
+            songview.setImageDrawable(this.getResources().getDrawable(android.R.drawable.ic_popup_sync));
+
             File SDCardRoot = Environment.getExternalStorageDirectory();
             //create a new file, specifying the path, and the filename
             //which we want to save the file as.
@@ -384,8 +420,16 @@ public class Song extends Activity implements OnClickListener {
                 }
                 //close the output stream when done
                 fileOutput.close();
+
             }
-            //catch some possible errors...
+
+            file = new File(SDCardRoot, "NHYMN/" + imageid + ".gif");
+
+            if (file.exists()) {
+                Bitmap bm = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/NHYMN/" + imageid + ".gif");
+                // Log.d("xxx", "content:/" + Environment.getExternalStorageDirectory() + "/NHYMN/" + imageid + ".gif");
+                songview.setImageBitmap(bm);
+            }
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -395,35 +439,75 @@ public class Song extends Activity implements OnClickListener {
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+
+        menu.setHeaderTitle("찬송가 악보").setHeaderIcon(R.drawable.app_notes).add(0, MENU_ITEM_OPENVIEW, 0, "이미지 뷰어로보기");
+
+        MenuItem item4 = menu.add(0, MENU_AUTO_LOAD, 0, "전체 다운로드");
+        item4.setIcon(android.R.drawable.ic_popup_sync);
+
+        MenuItem item5 = menu.add(0, MENU_AUTO_RELOAD, 0, "현재 악보 다시받기");
+        item5.setIcon(android.R.drawable.ic_menu_save);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
-        MenuItem item4 = menu.add(0, MENU_AUTO_LOAD, 0, R.string.menu_auto_load);
-        item4.setIcon(R.drawable.ic_menu_refresh);
+        MenuItem item4 = menu.add(0, MENU_AUTO_LOAD, 0, "전체악보받기");
+        item4.setIcon(android.R.drawable.ic_popup_sync);
+
+        MenuItem item5 = menu.add(0, MENU_AUTO_RELOAD, 0, "현재악보다시받기");
+        item5.setIcon(android.R.drawable.ic_menu_save);
+
+        MenuItem item6 = menu.add(0, MENU_ITEM_OPENVIEW, 0, "확대보기");
+        item6.setIcon(android.R.drawable.ic_menu_slideshow);
 
         return true;
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-
-        return true;
+    public boolean onContextItemSelected(MenuItem item) {
+        menuItemSelected(item);
+        return super.onContextItemSelected(item);
     }
-
-    ProgressDialog mDialog;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        menuItemSelected(item);
+        return super.onOptionsItemSelected(item);
+    }
+
+    public boolean menuItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case MENU_AUTO_LOAD: {
-
                 new AutoDown().execute("");
                 return true;
             }
+            case MENU_ITEM_OPENVIEW: {
+                String imageid = songid + "";
+                imageid = imageid.length() == 1 ? "00" + imageid : imageid;
+                imageid = imageid.length() == 2 ? "0" + imageid : imageid;
 
+                File imgFile = new File(Environment.getExternalStorageDirectory() + "/NHYMN/" + imageid + ".gif");
+
+                Log.d("WebBibles", "Path=" + imgFile.getAbsolutePath());
+
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.parse("file://" + imgFile.getAbsolutePath()), "image/*");
+                startActivity(intent);
+
+                return true;
+            }
+            case MENU_AUTO_RELOAD: {
+                String imageid = songid + "";
+                imageid = imageid.length() == 1 ? "00" + imageid : imageid;
+                imageid = imageid.length() == 2 ? "0" + imageid : imageid;
+
+                this.loadImage(imageid);
+                return true;
+            }
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -431,8 +515,6 @@ public class Song extends Activity implements OnClickListener {
         private final HttpClient autoClient = new DefaultHttpClient();
         private SongsDao autoDao;
 
-        //private String autoContent;
-        //private int autoTargetVersion;
         private int max;
         private String downError = null;
         private ProgressDialog Dialog = new ProgressDialog(Song.this);
@@ -464,164 +546,170 @@ public class Song extends Activity implements OnClickListener {
 
                 Cursor c = autoDao.querySongsText(mVersion, songid);
 
-                if (!c.moveToNext()) {
-                    try {
-                        File SDCardRoot = Environment.getExternalStorageDirectory();
-                        //create a new file, specifying the path, and the filename
-                        //which we want to save the file as.
-                        File file = new File(SDCardRoot, "NHYMN/" + imageid + ".gif");
+                File SDCardRoot = Environment.getExternalStorageDirectory();
+                File file = new File(SDCardRoot, "NHYMN/" + imageid + ".gif");
 
-                        if (!file.exists()) {
-
-                            //set the download URL, a url that points to a file on the internet
-                            //this is the file to be downloaded
-                            URL url = new URL("http://m.holybible.or.kr/NHYMN/HYMN_SCR/" + imageid + ".gif");
-
-                            //create the new connection
-                            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-                            //set up some things on the connection
-                            urlConnection.setRequestMethod("GET");
-                            urlConnection.setDoOutput(true);
-
-                            //and connect!
-                            urlConnection.connect();
-
-                            //set the path where we want to save the file
-                            //in this case, going to save it on the root directory of the
-                            //sd card.
-                            SDCardRoot = Environment.getExternalStorageDirectory();
+                try {
+                    if (!c.moveToNext() || !file.exists()) {
+                        try {
                             //create a new file, specifying the path, and the filename
                             //which we want to save the file as.
-                            file = new File(SDCardRoot, "NHYMN");
+                            //File file = new File(SDCardRoot, "NHYMN/" + imageid + ".gif");
 
-                            if (!file.exists())
-                                file.mkdir();
+                            if (!file.exists()) {
 
-                            file = new File(SDCardRoot, "NHYMN/" + imageid + ".gif");
+                                //set the download URL, a url that points to a file on the internet
+                                //this is the file to be downloaded
+                                URL url = new URL("http://m.holybible.or.kr/NHYMN/HYMN_SCR/" + imageid + ".gif");
 
-                            //this will be used to write the downloaded data into the file we created
-                            FileOutputStream fileOutput = new FileOutputStream(file);
+                                //create the new connection
+                                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
-                            //this will be used in reading the data from the internet
-                            InputStream inputStream = urlConnection.getInputStream();
+                                //set up some things on the connection
+                                urlConnection.setRequestMethod("GET");
+                                urlConnection.setDoOutput(true);
 
-                            //this is the total size of the file
-                            //int totalSize = urlConnection.getContentLength();
-                            //variable to store total downloaded bytes
-                            int downloadedSize = 0;
+                                //and connect!
+                                urlConnection.connect();
 
-                            //create a buffer...
-                            byte[] buffer = new byte[1024];
-                            int bufferLength = 0; //used to store a temporary size of the buffer
+                                //set the path where we want to save the file
+                                //in this case, going to save it on the root directory of the
+                                //sd card.
+                                SDCardRoot = Environment.getExternalStorageDirectory();
+                                //create a new file, specifying the path, and the filename
+                                //which we want to save the file as.
+                                file = new File(SDCardRoot, "NHYMN");
 
-                            //now, read through the input buffer and write the contents to the file
-                            while ((bufferLength = inputStream.read(buffer)) > 0) {
-                                //add the data in the buffer to the file in the file output stream (the file on the sd card
-                                fileOutput.write(buffer, 0, bufferLength);
-                                //add up the size so we know how much is downloaded
-                                downloadedSize += bufferLength;
-                                //this is where you would do something to report the prgress, like this maybe
-                                //updateProgress(downloadedSize, totalSize);
+                                if (!file.exists())
+                                    file.mkdir();
 
+                                file = new File(SDCardRoot, "NHYMN/" + imageid + ".gif");
+
+                                //this will be used to write the downloaded data into the file we created
+                                FileOutputStream fileOutput = new FileOutputStream(file);
+
+                                //this will be used in reading the data from the internet
+                                InputStream inputStream = urlConnection.getInputStream();
+
+                                //this is the total size of the file
+                                //int totalSize = urlConnection.getContentLength();
+                                //variable to store total downloaded bytes
+                                int downloadedSize = 0;
+
+                                //create a buffer...
+                                byte[] buffer = new byte[1024];
+                                int bufferLength = 0; //used to store a temporary size of the buffer
+
+                                //now, read through the input buffer and write the contents to the file
+                                while ((bufferLength = inputStream.read(buffer)) > 0) {
+                                    //add the data in the buffer to the file in the file output stream (the file on the sd card
+                                    fileOutput.write(buffer, 0, bufferLength);
+                                    //add up the size so we know how much is downloaded
+                                    downloadedSize += bufferLength;
+                                    //this is where you would do something to report the prgress, like this maybe
+                                    //updateProgress(downloadedSize, totalSize);
+
+                                }
+                                //close the output stream when done
+                                fileOutput.close();
                             }
-                            //close the output stream when done
-                            fileOutput.close();
+
+                            HttpGet httpget = new HttpGet(mTitleUrl[mVersion] + songid);
+                            ResponseHandler<String> responseHandler = new BasicResponseHandler();
+
+                            ///////////////////////////////
+
+                            String HTMLSource = autoClient.execute(httpget, responseHandler);
+
+                            HTMLSource = HTMLSource.substring(HTMLSource.indexOf("<body") - 1);
+
+                            HTMLSource = HTMLSource.replace("<br>", "##").replace("\t", " ");
+
+                            Matcher matcher = Pattern.compile("<(\"[^\"]*\"|'[^']*'|[^'\">])*>").matcher("");
+
+                            StringBuffer result = new StringBuffer();
+                            matcher.reset(HTMLSource);
+                            while (matcher.find()) {
+                                matcher.appendReplacement(result, "");
+                            }
+                            matcher.appendTail(result);
+
+                            HTMLSource = result.toString().trim();
+                            ///////////////////////////////////////
+                            matcher = Pattern.compile("[\\r|\\n|\\r\\n]").matcher("");
+
+                            matcher.reset(HTMLSource);
+
+                            result = new StringBuffer();
+                            while (matcher.find()) {
+                                matcher.appendReplacement(result, "");
+                            }
+                            matcher.appendTail(result);
+
+                            HTMLSource = result.toString().replace("##", "\n");
+
+                            String res = new String(HTMLSource.getBytes("8859_1"), "KSC5601");
+
+                            String song_title = res.substring(res.indexOf("[주제]") - 1);
+                            song_title = song_title.substring(0, song_title.indexOf("[가사]") - 1);
+                            song_title = song_title.replace("[제목]", "\n[제목]");
+                            song_title = song_title.replace("  ", "");
+
+                            httpget = new HttpGet(mContentsUrl[mVersion] + songid);
+
+                            HTMLSource = autoClient.execute(httpget, responseHandler);
+
+                            HTMLSource = HTMLSource.substring(HTMLSource.indexOf("<body") - 1);
+
+                            HTMLSource = HTMLSource.replace("<br>", "##").replace("\t", " ");
+
+                            matcher = Pattern.compile("<(\"[^\"]*\"|'[^']*'|[^'\">])*>").matcher("");
+
+                            result = new StringBuffer();
+                            matcher.reset(HTMLSource);
+                            while (matcher.find()) {
+                                matcher.appendReplacement(result, "");
+                            }
+                            matcher.appendTail(result);
+
+                            HTMLSource = result.toString().trim();
+                            ///////////////////////////////////////
+                            matcher = Pattern.compile("[\\r|\\n|\\r\\n]").matcher("");
+
+                            matcher.reset(HTMLSource);
+
+                            result = new StringBuffer();
+                            while (matcher.find()) {
+                                matcher.appendReplacement(result, "");
+                            }
+                            matcher.appendTail(result);
+
+                            HTMLSource = result.toString().replace("##", "\n");
+
+                            //String res = new String(HTMLSource.getBytes("iso-8859-1"));
+                            //String res = new String(HTMLSource.getBytes("euc-kr"));
+                            //String res = new String(HTMLSource.getBytes("utf-8"));
+                            //String res = new String(HTMLSource.getBytes("euc-kr"), "UTF-8");
+                            //String res = new String(HTMLSource.getBytes("8859_1"), "UTF-8");
+                            res = new String(HTMLSource.getBytes("8859_1"), "KSC5601");
+                            ////////////////////////////////////////
+
+                            autoDao.insert(mVersion, songid, res, song_title.split("\n")[0], song_title.split("\n")[1], "");
+
+                        } catch (ClientProtocolException e) {
+                            downError = e.getMessage();
+                            cancel(true);
+                        } catch (IOException e) {
+                            downError = e.getMessage();
+                            cancel(true);
                         }
 
-                        HttpGet httpget = new HttpGet(mTitleUrl[mVersion] + songid);
-                        ResponseHandler<String> responseHandler = new BasicResponseHandler();
-
-                        ///////////////////////////////
-
-                        String HTMLSource = autoClient.execute(httpget, responseHandler);
-
-                        HTMLSource = HTMLSource.substring(HTMLSource.indexOf("<body") - 1);
-
-                        HTMLSource = HTMLSource.replace("<br>", "##").replace("\t", " ");
-
-                        Matcher matcher = Pattern.compile("<(\"[^\"]*\"|'[^']*'|[^'\">])*>").matcher("");
-
-                        StringBuffer result = new StringBuffer();
-                        matcher.reset(HTMLSource);
-                        while (matcher.find()) {
-                            matcher.appendReplacement(result, "");
-                        }
-                        matcher.appendTail(result);
-
-                        HTMLSource = result.toString().trim();
-                        ///////////////////////////////////////
-                        matcher = Pattern.compile("[\\r|\\n|\\r\\n]").matcher("");
-
-                        matcher.reset(HTMLSource);
-
-                        result = new StringBuffer();
-                        while (matcher.find()) {
-                            matcher.appendReplacement(result, "");
-                        }
-                        matcher.appendTail(result);
-
-                        HTMLSource = result.toString().replace("##", "\n");
-
-                        String res = new String(HTMLSource.getBytes("8859_1"), "KSC5601");
-
-                        String song_title = res.substring(res.indexOf("[주제]") - 1);
-                        song_title = song_title.substring(0, song_title.indexOf("[가사]") - 1);
-                        song_title = song_title.replace("[제목]", "\n[제목]");
-                        song_title = song_title.replace("  ", "");
-
-                        httpget = new HttpGet(mContentsUrl[mVersion] + songid);
-
-                        HTMLSource = autoClient.execute(httpget, responseHandler);
-
-                        HTMLSource = HTMLSource.substring(HTMLSource.indexOf("<body") - 1);
-
-                        HTMLSource = HTMLSource.replace("<br>", "##").replace("\t", " ");
-
-                        matcher = Pattern.compile("<(\"[^\"]*\"|'[^']*'|[^'\">])*>").matcher("");
-
-                        result = new StringBuffer();
-                        matcher.reset(HTMLSource);
-                        while (matcher.find()) {
-                            matcher.appendReplacement(result, "");
-                        }
-                        matcher.appendTail(result);
-
-                        HTMLSource = result.toString().trim();
-                        ///////////////////////////////////////
-                        matcher = Pattern.compile("[\\r|\\n|\\r\\n]").matcher("");
-
-                        matcher.reset(HTMLSource);
-
-                        result = new StringBuffer();
-                        while (matcher.find()) {
-                            matcher.appendReplacement(result, "");
-                        }
-                        matcher.appendTail(result);
-
-                        HTMLSource = result.toString().replace("##", "\n");
-
-                        //String res = new String(HTMLSource.getBytes("iso-8859-1"));
-                        //String res = new String(HTMLSource.getBytes("euc-kr"));
-                        //String res = new String(HTMLSource.getBytes("utf-8"));
-                        //String res = new String(HTMLSource.getBytes("euc-kr"), "UTF-8");
-                        //String res = new String(HTMLSource.getBytes("8859_1"), "UTF-8");
-                        res = new String(HTMLSource.getBytes("8859_1"), "KSC5601");
-                        ////////////////////////////////////////
-
-                        autoDao.insert(mVersion, songid, res, song_title.split("\n")[0], song_title.split("\n")[1], "");
-
-                    } catch (ClientProtocolException e) {
-                        downError = e.getMessage();
-                        cancel(true);
-                    } catch (IOException e) {
-                        downError = e.getMessage();
-                        cancel(true);
                     }
+                    c.close();
+                    autoDao.CloseDatabase();
+                } catch (Exception e) {
 
                 }
-                c.close();
-                autoDao.CloseDatabase();
 
             }
 

@@ -19,6 +19,7 @@ import org.nilriri.webbibles.dao.BookmarkDao;
 import org.nilriri.webbibles.dao.FavoritesDao;
 import org.nilriri.webbibles.dao.Constants.Bibles;
 import org.nilriri.webbibles.dao.Constants.FavoriteGroup;
+import org.nilriri.webbibles.dao.Constants.Notes;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,6 +33,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
@@ -45,10 +49,13 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
@@ -58,7 +65,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-public class BibleViewer extends Activity implements OnTouchListener {
+public class BibleViewer extends Activity implements OnTouchListener, OnClickListener {
 
     private static final String TAG = "BibleView";
 
@@ -88,6 +95,7 @@ public class BibleViewer extends Activity implements OnTouchListener {
     private int mBook = 0;
     private int mChapter = 0;
     private int mVerse = 0;
+    private Long mBibleID;
     private ArrayList<Long> mCheck = new ArrayList<Long>();
     private String mBaseUrl = "";
     private String mBaseUrl2 = "";
@@ -118,6 +126,8 @@ public class BibleViewer extends Activity implements OnTouchListener {
     public static final int MENU_ITEM_ADDFAVORITES = Menu.FIRST + 10;
     public static final int MENU_ITEM_FAVORITELIST = Menu.FIRST + 11;
     public static final int MENU_ITEM_SHARE = Menu.FIRST + 12;
+    public static final int MENU_ITEM_ADDLINE = Menu.FIRST + 13;
+    public static final int MENU_ITEM_STYLE = Menu.FIRST + 14;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,6 +196,8 @@ public class BibleViewer extends Activity implements OnTouchListener {
         mListView.setOnItemClickListener(new listOnItemClickListener());
         mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
+        ((Button) findViewById(R.id.reading)).setOnClickListener(this);
+
         Spinner verse_spinner = (Spinner) findViewById(R.id.verses);
         verse_spinner.setOnItemSelectedListener(new VerseOnItemSelectedListener());
         //verse_spinner.setOnCreateContextMenuListener(this);
@@ -210,6 +222,19 @@ public class BibleViewer extends Activity implements OnTouchListener {
 
         //grabURL(url);
         //grabURL("http://www.bskorea.or.kr/infobank/korSearch/korbibReadpage.aspx?version=CEV&BOOK=psa&chap=23&sec=1&cVersion=&fontString=12px&fontSize=1");
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.reading:
+
+                dao.updateReading(this.mVersion, this.mBook, this.mChapter);
+                this.ReloadBibleContents();
+                break;
+
+        }
 
     }
 
@@ -241,7 +266,10 @@ public class BibleViewer extends Activity implements OnTouchListener {
 
                             ((Spinner) findViewById(R.id.books)).setSelection(mBook);
 
+                            getIntent().removeExtra("BPLANT");
+
                             ReloadBibleContents();
+
                         } catch (Exception e) {
                             Log.d(Common.TAG, "error=" + e.getMessage());
                             e.printStackTrace();
@@ -537,7 +565,7 @@ public class BibleViewer extends Activity implements OnTouchListener {
             String WebData[] = Common.tokenFn(HTMLSource, "||");
 
             ArrayList<HashMap<String, String>> mList = new ArrayList<HashMap<String, String>>();
-            ArrayList<HashMap<String, String>> mList2 = new ArrayList<HashMap<String, String>>();
+            // ArrayList<HashMap<String, String>> mList2 = new ArrayList<HashMap<String, String>>();
 
             for (int y = 0; y < WebData.length; y++) {
                 HashMap<String, String> item = new HashMap<String, String>();
@@ -554,7 +582,7 @@ public class BibleViewer extends Activity implements OnTouchListener {
                 } else if (z.length == 2) {
                     if (!"".equals(z[0].trim())) {
                         item2.put("Number", z[0].trim());
-                        mList2.add(item2);
+                        //  mList2.add(item2);
                     }
 
                     item.put("Number", z[0].trim());
@@ -571,10 +599,10 @@ public class BibleViewer extends Activity implements OnTouchListener {
 
             mListView.setAdapter(adapter);
 
-            Spinner spin_verse = (Spinner) findViewById(R.id.verses);
-            SimpleAdapter adapter_verse = new SimpleAdapter(getBaseContext(), mList2, android.R.layout.simple_spinner_item, new String[] { "Number" }, new int[] { android.R.id.text1 });
-            adapter_verse.setDropDownViewResource(android.R.layout.simple_spinner_item);
-            spin_verse.setAdapter(adapter_verse);
+            //Spinner spin_verse = (Spinner) findViewById(R.id.verses);
+            //SimpleAdapter adapter_verse = new SimpleAdapter(getBaseContext(), mList2, android.R.layout.simple_spinner_item, new String[] { "Number" }, new int[] { android.R.id.text1 });
+            //adapter_verse.setDropDownViewResource(android.R.layout.simple_spinner_item);
+            //spin_verse.setAdapter(adapter_verse);
 
             if (Prefs.getAutoSave(BibleViewer.this)) {
                 dao.insert(mVersions[TargetVersion], mKVersions[TargetVersion], TargetVersion, mBook, mChapter, mListView);
@@ -672,10 +700,21 @@ public class BibleViewer extends Activity implements OnTouchListener {
                 dao.insert(mVersions[mVersion], mKVersions[mVersion], mVersion, mBook, mChapter, mListView);
             }
 
+            mCompletecount++;
+
+            if (mCompletecount > 1) {
+                if (mVersion != mVersion2 && mVersion2 >= 0 && Prefs.getCompare(getBaseContext())) {
+                    mListView.setAdapter(null);
+                    loadDBContents();
+                }
+            }
+
+            /*
             Spinner spin_verse = (Spinner) findViewById(R.id.verses);
             SimpleAdapter adapter_verse = new SimpleAdapter(getBaseContext(), mList2, android.R.layout.simple_spinner_item, new String[] { "Number" }, new int[] { android.R.id.text1 });
             adapter_verse.setDropDownViewResource(android.R.layout.simple_spinner_item);
             spin_verse.setAdapter(adapter_verse);
+            */
 
             return true;
         }
@@ -957,22 +996,25 @@ public class BibleViewer extends Activity implements OnTouchListener {
         MenuItem item1 = menu.add(0, MENU_ITEM_PREV, 0, R.string.menu_previous);
         item1.setIcon(android.R.drawable.ic_media_rew);
 
-        MenuItem item2 = menu.add(0, MENU_ITEM_SAVE, 0, R.string.menu_save);
-        item2.setIcon(android.R.drawable.ic_menu_save);
-
         MenuItem item3 = menu.add(0, MENU_ITEM_NEXT, 0, R.string.menu_next);
         item3.setIcon(android.R.drawable.ic_media_ff);
 
+        MenuItem item11 = menu.add(0, MENU_ITEM_SHARE, 0, R.string.menu_share);
+        item11.setIcon(android.R.drawable.ic_menu_share);
+
+        MenuItem item0 = menu.add(0, MENU_ITEM_NOTELIST, 0, R.string.menu_notelist);
+        item0.setIcon(android.R.drawable.ic_menu_agenda);
+
         MenuItem item4 = menu.add(0, MENU_LOAD_WEB, 0, R.string.menu_loadweb);
-        item4.setIcon(R.drawable.ic_menu_refresh);
+        item4.setIcon(android.R.drawable.ic_popup_sync);
+
+        MenuItem item2 = menu.add(0, MENU_ITEM_SAVE, 0, R.string.menu_save);
+        item2.setIcon(android.R.drawable.ic_menu_save);
 
         if (dao.queryExistsContents(mVersion, mBook, mChapter)) {
             MenuItem item5 = menu.add(0, MENU_LOAD_DB, 0, R.string.menu_loaddb);
             item5.setIcon(android.R.drawable.ic_menu_upload);
         }
-
-        MenuItem item0 = menu.add(0, MENU_ITEM_NOTELIST, 0, R.string.menu_notelist);
-        item0.setIcon(android.R.drawable.ic_menu_agenda);
 
         MenuItem item9 = menu.add(0, MENU_ITEM_ADDFAVORITES, 0, R.string.menu_favorites);
         item9.setIcon(android.R.drawable.ic_menu_recent_history);
@@ -988,9 +1030,6 @@ public class BibleViewer extends Activity implements OnTouchListener {
 
         MenuItem item8 = menu.add(0, MENU_ITEM_SENDSMS, 0, R.string.menu_sendsms);
         item8.setIcon(android.R.drawable.ic_menu_send);
-
-        MenuItem item11 = menu.add(0, MENU_ITEM_SHARE, 0, "Share");
-        item11.setIcon(android.R.drawable.ic_menu_share);
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
@@ -1177,8 +1216,11 @@ public class BibleViewer extends Activity implements OnTouchListener {
             if (mCursor.moveToPosition(position)) {
                 TextView versestr = (TextView) v.findViewById(R.id.versestr);
                 TextView contents = (TextView) v.findViewById(R.id.contents);
+                TextView comment = (TextView) v.findViewById(R.id.comment);
+                LinearLayout comment_line = (LinearLayout) v.findViewById(R.id.comment_line);
                 //TextView rowidcolon = (TextView) v.findViewById(R.id.rowidcolon);
                 ImageView flag = (ImageView) v.findViewById(R.id.flag);
+                ImageView note = (ImageView) v.findViewById(R.id.note);
 
                 contents.setTextSize(TypedValue.COMPLEX_UNIT_SP, Prefs.getFontSize(mContext));
 
@@ -1187,13 +1229,47 @@ public class BibleViewer extends Activity implements OnTouchListener {
                 }
                 if (contents != null) {
 
-                    contents.setText(mCursor.getString(7));
+                    int style = mCursor.getInt(mCursor.getColumnIndexOrThrow("style"));
+                    if (style > 0) {
+                        try {
+
+                            //str.setSpan(new StyleSpan(android.graphics.Typeface.ITALIC), 0, 7, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            //str.setSpan(new BackgroundColorSpan(0xFFFFFF00), 8, 19, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            //str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 21, str.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                            SpannableString str = new SpannableString(mCursor.getString(7));
+                            str.setSpan(new BackgroundColorSpan(getResources().getColor(R.color.lightpen_color)), 0, str.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            contents.setText(str);
+                        } catch (Exception e) {
+
+                        }
+                    } else {
+                        contents.setText(mCursor.getString(7));
+                    }
+                }
+                if (comment != null) {
+                    String comments = mCursor.getString(mCursor.getColumnIndexOrThrow("comment"));
+                    if (!"".equals(comments)) {
+                        comment_line.setVisibility(View.VISIBLE);
+                        comment.setText(comments);
+                    } else {
+                        comment_line.setVisibility(View.GONE);
+                    }
                 }
                 if (flag != null) {
                     if (mCheck.contains(mCursor.getLong(0)))
                         flag.setVisibility(View.VISIBLE);
                     else
                         flag.setVisibility(View.INVISIBLE);
+                }
+
+                if (note != null) {
+                    if (mCursor.getLong(mCursor.getColumnIndexOrThrow("note")) > 0) {
+                        note.setVisibility(View.VISIBLE);
+                        note.setImageResource(android.R.drawable.ic_menu_edit);
+                    } else {
+                        note.setVisibility(View.INVISIBLE);
+                    }
                 }
 
             }
@@ -1212,37 +1288,29 @@ public class BibleViewer extends Activity implements OnTouchListener {
         Cursor contents = dao.queryContents(mVersion, mBook, mChapter, mVersion2);
         //SimpleCursorAdapter adapter = new EfficientAdapter(getBaseContext(), R.layout.chapter_item, contents, new String[] { "verse", "contents" }, new int[] { R.id.versestr, R.id.contents });
 
-        SimpleCursorAdapter adapter = new mySimpleAdapter(getBaseContext(), R.layout.chapter_item, contents, new String[] { "verse", "contents" }, new int[] { R.id.versestr, R.id.contents });
+        SimpleCursorAdapter adapter = new mySimpleAdapter(getBaseContext(), R.layout.chapter_item, contents, new String[] { "verse", "contents", "comment" }, new int[] { R.id.versestr, R.id.contents, R.id.comment });
 
         mListView.setAdapter(adapter);
 
-        Log.d(TAG, "contents =" + contents.getCount());
+        String lastRead = dao.queryLastReading(mVersion, mBook, mChapter);
 
-        ArrayList<HashMap<String, String>> mList2 = new ArrayList<HashMap<String, String>>();
-        if (contents.moveToFirst()) {
-            do {
-                HashMap<String, String> item2 = new HashMap<String, String>();
-                if (contents.getInt(6) > 0) {
-                    item2.put("Number", contents.getString(6).trim());
-                    mList2.add(item2);
-                } else {
-                    continue;
-                }
-
-            } while (contents.moveToNext());
-
+        if (mVersion != mVersion2 && mVersion2 >= 0 && Prefs.getCompare(BibleViewer.this)) {
+            ((Button) findViewById(R.id.reading)).setVisibility(View.GONE);
+        } else {
+            if ("".equals(lastRead))
+                lastRead = "Read?";
+            ((Button) findViewById(R.id.reading)).setVisibility(View.VISIBLE);
+            ((Button) findViewById(R.id.reading)).setText(lastRead);
         }
 
-        if (mList2.size() > 0) {
+        Cursor c = dao.queryVerseList(mVersion, mBook, mChapter);
+        //TODO:
+        Spinner spin_verse = (Spinner) findViewById(R.id.verses);
+        SimpleCursorAdapter adapter_verse = new SimpleCursorAdapter(BibleViewer.this, android.R.layout.simple_spinner_item, c, new String[] { "verse" }, new int[] { android.R.id.text1 });
+        //SimpleAdapter adapter_verse = new SimpleAdapter(getBaseContext(), mList2, android.R.layout.simple_spinner_item, new String[] { "Number" }, new int[] { android.R.id.text1 });
+        adapter_verse.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-            Cursor c = dao.queryVerseList(mVersion, mBook, mChapter);
-
-            Spinner spin_verse = (Spinner) findViewById(R.id.verses);
-            SimpleCursorAdapter adapter_verse = new SimpleCursorAdapter(BibleViewer.this, android.R.layout.simple_spinner_item, c, new String[] { "verse" }, new int[] { android.R.id.text1 });
-            //SimpleAdapter adapter_verse = new SimpleAdapter(getBaseContext(), mList2, android.R.layout.simple_spinner_item, new String[] { "Number" }, new int[] { android.R.id.text1 });
-            adapter_verse.setDropDownViewResource(android.R.layout.simple_spinner_item);
-            spin_verse.setAdapter(adapter_verse);
-        }
+        spin_verse.setAdapter(adapter_verse);
     }
 
     @SuppressWarnings("unchecked")
@@ -1261,6 +1329,7 @@ public class BibleViewer extends Activity implements OnTouchListener {
         if (obj.getClass().toString().indexOf("SQLiteCursor") >= 0) {
             Cursor c = (Cursor) obj;
             mVerse = c.getInt(6);
+            mBibleID = c.getLong(0);
         } else {
             HashMap<String, String> map = (HashMap<String, String>) obj;
             String verse = map.get("Number").trim();
@@ -1279,17 +1348,26 @@ public class BibleViewer extends Activity implements OnTouchListener {
         MenuItem item6 = menu.add(0, MENU_ITEM_ADDMARK, 0, R.string.menu_addmark);
         item6.setIcon(android.R.drawable.ic_menu_compass);
 
-        MenuItem item7 = menu.add(0, MENU_ITEM_ADDNOTE, 0, R.string.menu_addnote);
-        item7.setIcon(android.R.drawable.ic_menu_add);
+        MenuItem item12 = menu.add(0, MENU_ITEM_ADDLINE, 0, R.string.menu_addline);
+        item12.setIcon(android.R.drawable.ic_menu_edit);
+
+        MenuItem item13 = menu.add(0, MENU_ITEM_STYLE, 0, R.string.menu_style);
+        item13.setIcon(android.R.drawable.ic_menu_crop);
+
+        MenuItem item11 = menu.add(0, MENU_ITEM_SHARE, 0, R.string.menu_share);
+        item11.setIcon(android.R.drawable.ic_menu_share);
 
         MenuItem item8 = menu.add(0, MENU_ITEM_SENDSMS, 0, R.string.menu_sendsms);
         item8.setIcon(android.R.drawable.ic_menu_send);
 
-        MenuItem item0 = menu.add(0, MENU_ITEM_NOTELIST, 0, R.string.menu_notelist);
-        item0.setIcon(android.R.drawable.ic_menu_agenda);
+        MenuItem item7 = menu.add(0, MENU_ITEM_ADDNOTE, 0, R.string.menu_addnote);
+        item7.setIcon(android.R.drawable.ic_menu_add);
 
         MenuItem item9 = menu.add(0, MENU_ITEM_ADDFAVORITES, 0, R.string.menu_favorites);
         item9.setIcon(android.R.drawable.ic_menu_recent_history);
+
+        MenuItem item0 = menu.add(0, MENU_ITEM_NOTELIST, 0, R.string.menu_notelist);
+        item0.setIcon(android.R.drawable.ic_menu_agenda);
 
         MenuItem item10 = menu.add(0, MENU_ITEM_FAVORITELIST, 0, R.string.menu_favorite_list);
         item10.setIcon(android.R.drawable.ic_menu_agenda);
@@ -1300,17 +1378,14 @@ public class BibleViewer extends Activity implements OnTouchListener {
         MenuItem item3 = menu.add(0, MENU_ITEM_NEXT, 0, R.string.menu_next);
         item3.setIcon(android.R.drawable.ic_media_ff);
 
-        MenuItem item2 = menu.add(0, MENU_ITEM_SAVE, 0, R.string.menu_save);
-        item2.setIcon(android.R.drawable.ic_menu_save);
+        //    MenuItem item2 = menu.add(0, MENU_ITEM_SAVE, 0, R.string.menu_save);
+        //   item2.setIcon(android.R.drawable.ic_menu_save);
 
-        MenuItem item4 = menu.add(0, MENU_LOAD_WEB, 0, R.string.menu_loadweb);
-        item4.setIcon(R.drawable.ic_menu_refresh);
+        //   MenuItem item4 = menu.add(0, MENU_LOAD_WEB, 0, R.string.menu_loadweb);
+        //    item4.setIcon(android.R.drawable.ic_popup_sync);
 
-        MenuItem item5 = menu.add(0, MENU_LOAD_DB, 0, R.string.menu_loaddb);
-        item5.setIcon(android.R.drawable.ic_menu_upload);
-
-        MenuItem item11 = menu.add(0, MENU_ITEM_SHARE, 0, "Share");
-        item11.setIcon(android.R.drawable.ic_menu_share);
+        //    MenuItem item5 = menu.add(0, MENU_LOAD_DB, 0, R.string.menu_loaddb);
+        //    item5.setIcon(android.R.drawable.ic_menu_upload);
 
     }
 
@@ -1385,6 +1460,18 @@ public class BibleViewer extends Activity implements OnTouchListener {
 
                 return true;
             }
+
+            case MENU_ITEM_STYLE: {
+
+                dao.updateStyle(mVersion, mBibleID, 1);
+                ReloadBibleContents();
+                return true;
+            }
+            case MENU_ITEM_ADDLINE: {
+
+                addNewNote(true);
+                return true;
+            }
             case MENU_ITEM_ADDNOTE: {
 
                 addNewNote();
@@ -1457,15 +1544,20 @@ public class BibleViewer extends Activity implements OnTouchListener {
      * 
      */
     private void addNewNote() {
+        addNewNote(false);
+    }
+
+    private void addNewNote(boolean isComment) {
         Intent intent = new Intent();
         intent.setClass(this, NoteEditor.class);
         intent.putExtra("id", new Long(-1));
-        intent.putExtra("bibleid", mListView.getSelectedItemId());
+        intent.putExtra("bibleid", this.mBibleID);
         intent.putExtra("version", mVersion);
         intent.putExtra("book", mBook);
         intent.putExtra("chapter", mChapter);
         intent.putExtra("verse", mVerse);
         intent.putExtra("msg", getSelectMsg());
+        intent.putExtra("iscomment", isComment);
         startActivity(intent);
     }
 

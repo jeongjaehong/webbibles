@@ -12,14 +12,18 @@
 			android:layout_height="fill_parent" android:orientation="horizontal"
 			android:padding="2sp" android:theme="@android:style/Theme.Light">
 			<Spinner android:id="@+id/books" style="?android:attr/buttonStyleSmall"
-				android:entries="@array/all_testment" android:layout_width="150dip"
+				android:entries="@array/all_testment" android:layout_width="100dip"
 				android:layout_height="wrap_content" />
 			<Spinner android:id="@+id/chapters" style="?android:attr/buttonStyleSmall"
-				android:entries="@array/all_testment" android:layout_width="60dip"
-				android:layout_height="wrap_content" android:layout_toRightOf="@id/books" />
+				android:layout_width="60dip" android:layout_height="wrap_content"
+				android:layout_toRightOf="@id/books" />
 			<Spinner android:id="@+id/verses" style="?android:attr/buttonStyleSmall"
-				android:entries="@array/all_testment" android:layout_width="60dip"
-				android:layout_height="wrap_content" android:layout_toRightOf="@id/chapters" />
+				android:layout_width="60dip" android:layout_height="wrap_content"
+				android:layout_toRightOf="@id/chapters" />
+			<Button android:id="@+id/reading" style="?android:attr/buttonStyleSmall"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:text="Read?" android:textSize="12sp" android:textColor="@color/orange_color"
+				android:layout_toRightOf="@id/verses" />
 		</RelativeLayout>
 
 

@@ -9,4 +9,5 @@ public class BibleBean {
     public int chapter;
     public int verse;
     public String contents;
+    public int style;
 }

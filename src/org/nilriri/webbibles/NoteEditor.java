@@ -6,7 +6,6 @@ import org.nilriri.webbibles.com.Common;
 import org.nilriri.webbibles.com.Prefs;
 import org.nilriri.webbibles.dao.NoteDao;
 import org.nilriri.webbibles.dao.Constants.Notes;
-import org.nilriri.webbibles.tools.SendMail;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -59,6 +58,7 @@ public class NoteEditor extends Activity implements OnClickListener {
     private int mBook;
     private int mChapter;
     private int mVerse;
+    private boolean misComment = false;
 
     private boolean mNoteOnly = false;
     private Cursor mCursor;
@@ -127,6 +127,7 @@ public class NoteEditor extends Activity implements OnClickListener {
             mBook = intent.getIntExtra("book", -1);
             mChapter = intent.getIntExtra("chapter", -1);
             mVerse = intent.getIntExtra("verse", 1);
+            misComment = intent.getBooleanExtra("iscomment", false);
 
             multiMsg = "\"" + intent.getStringExtra("msg") + "\"";
 
@@ -211,6 +212,7 @@ public class NoteEditor extends Activity implements OnClickListener {
             mBook = mCursor.getInt(Notes.COL_BOOK);
             mChapter = mCursor.getInt(Notes.COL_CHAPTER);
             mVerse = mCursor.getInt(Notes.COL_VERSE);
+            misComment = (mCursor.getInt(Notes.COL_SCORE) == -1);
 
             mVerseStr.setTextKeepState(versestr);
             mNoteTitle.setText(notetitle);
@@ -246,6 +248,7 @@ public class NoteEditor extends Activity implements OnClickListener {
         values.put(Notes.VERSE, this.mVerse);
         values.put(Notes.VERSESTR, mBibleShortName[mBook] + " " + (mChapter + 1) + ":" + (mVerse));
         values.put(Notes.MODIFIED_DATE, modified_date);
+        values.put(Notes.SCORE, misComment ? -1 : 0);
 
         String title = (String) mNoteTitle.getText();
         String text = mText.getText().toString().trim();
@@ -265,6 +268,7 @@ public class NoteEditor extends Activity implements OnClickListener {
                 values.put(Notes._ID, this.mID);
                 dao.update(values);
             } else {
+
                 values.remove(Notes._ID);
                 dao.insert(values);
 
@@ -289,7 +293,6 @@ public class NoteEditor extends Activity implements OnClickListener {
         menu.add(0, BIBLECOPY, 0, R.string.menu_copybible).setShortcut('3', 'p').setIcon(android.R.drawable.ic_menu_crop);
         menu.add(0, NOTESHARE, 0, "Share").setShortcut('4', 't').setIcon(android.R.drawable.ic_menu_share);
         menu.add(0, SENDSMS, 0, R.string.menu_sendsms).setShortcut('5', 's').setIcon(android.R.drawable.ic_menu_send);
-        menu.add(0, SENDMAIL, 0, R.string.menu_sendmail).setShortcut('6', 'm').setIcon(android.R.drawable.ic_menu_send);
         return true;
     }
 
@@ -339,25 +342,18 @@ public class NoteEditor extends Activity implements OnClickListener {
                 return true;
             case SENDMAIL:
 
-                if (Prefs.getGCalendarSync(this)) {
-                    Intent gmailintent = new Intent();
-                    gmailintent.setClass(this, SendMail.class);
-                    gmailintent.putExtra("msgbody", mText.getText().toString().trim());
-                    startActivity(gmailintent);
+                /* Create the Intent */
+                final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
 
-                } else {
-                    /* Create the Intent */
-                    final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+                /* Fill it with Data */
+                emailIntent.setType("plain/text");
+                emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] { "somebody@gmail.com" });
+                emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, mNoteTitle.getText().toString());
+                emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, mText.getText().toString());
 
-                    /* Fill it with Data */
-                    emailIntent.setType("plain/text");
-                    emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] { "somebody@gmail.com" });
-                    emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, mNoteTitle.getText().toString());
-                    emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, mText.getText().toString());
+                /* Send it off to the Activity-Chooser */
+                startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 
-                    /* Send it off to the Activity-Chooser */
-                    startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-                }
                 return true;
         }
         return super.onOptionsItemSelected(item);

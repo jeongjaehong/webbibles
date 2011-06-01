@@ -57,7 +57,7 @@
 			android:padding="0dip" android:visibility="gone">
 			<ImageView android:layout_height="wrap_content" android:id="@+id/songview"
 				android:layout_width="wrap_content" android:layout_below="@id/song_id"
-				android:scaleType="matrix" android:layout_centerInParent="true" />
+				android:scaleType="fitXY" />
 
 		</ScrollView>
 

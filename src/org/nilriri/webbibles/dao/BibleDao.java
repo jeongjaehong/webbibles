@@ -1,5 +1,6 @@
 package org.nilriri.webbibles.dao;
 
+import java.util.Calendar;
 import java.util.HashMap;
 
 import org.nilriri.webbibles.com.Common;
@@ -57,6 +58,38 @@ public class BibleDao extends AbstractDao {
         String sql = "DELETE FROM " + Bibles.VERSION_TABLE_NAME[mVersion];
         getWritableDatabase().execSQL(sql);
 
+    }
+
+    public void updateStyle(int mVersion, Long id, int style) {
+        String sql = "UPDATE " + Bibles.VERSION_TABLE_NAME[mVersion] + " SET style = case when style = 0 then 1 else 0 end WHERE _id = " + id;
+        getWritableDatabase().execSQL(sql);
+    }
+
+    public void updateReading(int mVersion, int mBook, int mChapter) {
+
+        String last = queryLastReading(mVersion, mBook, mChapter);
+
+        if (last.equals(Common.fmtDate(Calendar.getInstance()))) {
+            try {
+                String sql = "delete from reading where _id = cast(strftime('%J', date('" + Common.fmtDate(Calendar.getInstance()) + "')) as int) and version = " + mVersion + " and book = " + mBook + " and chapter = " + mChapter + " ";
+                getWritableDatabase().execSQL(sql);
+            } catch (Exception e2) {
+
+            }
+        } else {
+
+            try {
+                String sql = "insert into reading (_id, version, book, chapter, writedate) values (cast(strftime('%J', date('" + Common.fmtDate(Calendar.getInstance()) + "')) as int), " + mVersion + ", " + mBook + ", " + mChapter + ", '" + Common.fmtDate(Calendar.getInstance()) + "' ) ";
+                getWritableDatabase().execSQL(sql);
+            } catch (Exception e) {
+                try {
+                    String sql = "update reading set writedate = '" + Common.fmtDate(Calendar.getInstance()) + "' where _id = cast(strftime('%J', date('" + Common.fmtDate(Calendar.getInstance()) + "')) as int) and version = " + mVersion + " and book = " + mBook + " and chapter = " + mChapter + " ";
+                    getWritableDatabase().execSQL(sql);
+                } catch (Exception e2) {
+
+                }
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -327,11 +360,13 @@ public class BibleDao extends AbstractDao {
         StringBuffer query = new StringBuffer();
 
         query.append("SELECT  ");
-        query.append("  distinct a.verse as _id, a.verse + 1 as verse   ");
+        query.append("  cast(a.verse as int) as _id, a.verse as verse   ");
         query.append("FROM " + Bibles.VERSION_TABLE_NAME[mVersion] + " a ");
         query.append("WHERE a." + Bibles.VERSION + " = ? ");
         query.append("AND a." + Bibles.BOOK + " = ? ");
         query.append("AND a." + Bibles.CHAPTER + " = ? ");
+        query.append("AND a." + Bibles.VERSE + " > 0 ");
+        query.append(" ORDER BY 1 ");
 
         String selectionArgs[] = new String[] { mVersion + "", mBook + "", mChapter + "" };
 
@@ -340,6 +375,32 @@ public class BibleDao extends AbstractDao {
         //Cursor cursor = 
 
         return getReadableDatabase().rawQuery(query.toString(), selectionArgs);
+
+    }
+
+    public String queryLastReading(int mVersion, int mBook, int mChapter) {
+
+        //SQLiteDatabase db = getReadableDatabase();
+
+        StringBuffer query = new StringBuffer();
+
+        query.append("SELECT max(r.writedate) ");
+        query.append("FROM reading r ");
+        query.append("WHERE r." + Bibles.VERSION + " = ? ");
+        query.append("AND r." + Bibles.BOOK + " = ? ");
+        query.append("AND r." + Bibles.CHAPTER + " = ? ");
+
+        String selectionArgs[] = new String[] { mVersion + "", mBook + "", mChapter + "" };
+
+        Cursor c = getReadableDatabase().rawQuery(query.toString(), selectionArgs);
+
+        String result = "";
+
+        if (c.moveToNext()) {
+            result = c.getString(0);
+        }
+
+        return result == null ? "" : result;
 
     }
 
@@ -351,17 +412,24 @@ public class BibleDao extends AbstractDao {
 
         query.append("SELECT  ");
         query.append("  a._id, a.vercode, a.vername, a.version, a.book, a.chapter, (case when a.verse > 0 then a.verse else null end) verse  ");
-        query.append("  , a.contents|| (select case when count(*) > 0 then ' ¡Ú' else '' end from biblenote n where n.book = a.book and n.chapter = a.chapter and n.verse = cast(a.verse as integer)) as contents ");
+        query.append("  , a.contents as contents ");
+        query.append("  , (select count(*) from biblenote n where ifnull(n.score,0) >= 0 and n.book = a.book and n.chapter = a.chapter and n.verse = cast(a.verse as integer)) as note ");
+        query.append("  , ifnull(n.contents,'') as comment ");
+        query.append("  , a.style as style ");
         query.append("FROM " + Bibles.VERSION_TABLE_NAME[mVersion] + " a ");
+        query.append(" LEFT JOIN " + Notes.NOTE_TABLE_NAME + " n ");
+        query.append("    ON 1=1 ");
+        query.append("   AND a." + Bibles._ID + " = n." + Notes.BIBLEID + " ");
+        query.append("   AND n." + Notes.SCORE + " < 0 ");
         query.append("WHERE a." + Bibles.VERSION + " = ? ");
         query.append("AND a." + Bibles.BOOK + " = ? ");
         query.append("AND a." + Bibles.CHAPTER + " = ? ");
 
+        query.append(" ORDER BY 1 ");
+
         String selectionArgs[] = new String[] { mVersion + "", mBook + "", mChapter + "" };
 
-        //Log.d("InternalDao-queryExistsSchedule", "query=" + query.toString());
-
-        //Cursor cursor = 
+        Log.d("InternalDao-queryExistsSchedule", "query=" + query.toString());
 
         return getReadableDatabase().rawQuery(query.toString(), selectionArgs);
 
@@ -369,14 +437,15 @@ public class BibleDao extends AbstractDao {
 
     public Cursor queryCompareContents(int mVersion, int mBook, int mChapter, int mVersion2) {
 
-        //SQLiteDatabase db = getReadableDatabase();
-
         StringBuffer query = new StringBuffer();
 
         query.append(" SELECT  ");
         query.append("  a._id as _id, a.vercode, a.vername, a.version, a.book, a.chapter, (case when a.verse > 0 then a.verse else null end) verse  ");
-        query.append("  , a.contents|| (select case when count(*) > 0 then ' ¡Ú' else '' end from biblenote n where n.book = a.book and n.chapter = a.chapter and n.verse = cast(a.verse as integer)) as contents ");
+        query.append("  , a.contents as contents ");
         query.append("  , cast(a.verse as integer) as sort ");
+        query.append("  , (select count(*) from biblenote n where ifnull(n.score,0) >= 0 and n.book = a.book and n.chapter = a.chapter and n.verse = cast(a.verse as integer)) as note ");
+        query.append("  , '' as comment ");
+        query.append("  , a.style as style ");
         query.append(" FROM " + Bibles.VERSION_TABLE_NAME[mVersion] + " a ");
         query.append(" WHERE a." + Bibles.VERSION + " = " + mVersion);
         query.append(" AND a." + Bibles.BOOK + " = " + mBook);
@@ -385,8 +454,11 @@ public class BibleDao extends AbstractDao {
         query.append(" UNION ALL  ");
         query.append(" SELECT  ");
         query.append("  a._id, a.vercode, a.vername, a.version, a.book, a.chapter, null verse  ");
-        query.append("  , a.contents|| (select case when count(*) > 0 then ' ¡Ú' else '' end from biblenote n where n.book = a.book and n.chapter = a.chapter and n.verse = cast(a.verse as integer)) as contents ");
+        query.append("  , a.contents as contents ");
         query.append("  , cast(a.verse as integer) as sort ");
+        query.append("  , (select count(*) from biblenote n where ifnull(n.score,0) >= 0 and n.book = a.book and n.chapter = a.chapter and n.verse = cast(a.verse as integer)) as note ");
+        query.append("  , '' as comment ");
+        query.append("  , a.style as style ");
         query.append(" FROM " + Bibles.VERSION_TABLE_NAME[mVersion2] + " a ");
         query.append(" WHERE a." + Bibles.VERSION + " = " + mVersion2);
         query.append(" AND a." + Bibles.BOOK + " = " + mBook);
@@ -489,7 +561,7 @@ public class BibleDao extends AbstractDao {
         query.append("  c._id, c.vercode, c.vername, c.version, c.book, c.chapter, c.verse verse, ");
         query.append("  (case when c.verse > 0 then '['||b.biblename || ' ' || (c.chapter + 1) || ':' || c.verse||'] ' else '['||b.biblename || ' ' || (c.chapter + 1) || '] ' end)  ");
         //query.append("  || c.contents as contents, '' empty ");
-       query.append("  || replace(replace(c.contents, '"+searchKeyword1+"', '<"+searchKeyword1+">'), '"+searchKeyword2+"', '<"+searchKeyword2+">') as contents, '' empty ");
+        query.append("  || replace(replace(c.contents, '" + searchKeyword1 + "', '<" + searchKeyword1 + ">'), '" + searchKeyword2 + "', '<" + searchKeyword2 + ">') as contents, '' empty ");
 
         if (searchTestment >= 1) {
             query.append("FROM " + Bibles.VERSION_TABLE_NAME[searchVersion] + " c ");
@@ -571,6 +643,7 @@ public class BibleDao extends AbstractDao {
         val.put(Bibles.CHAPTER, bibleBean.chapter);
         val.put(Bibles.VERSE, bibleBean.verse);
         val.put(Bibles.CONTENTS, bibleBean.contents);
+        val.put(Bibles.STYLE, bibleBean.style);
 
         SQLiteDatabase db = getWritableDatabase();
 

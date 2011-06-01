@@ -7,10 +7,10 @@ import android.provider.BaseColumns;
  */
 public final class Constants {
     public static final String DATABASE_NAME = "bibles.sqlite";
-    public static final int DATABASE_VERSION = 12;
+    public static final int DATABASE_VERSION = 14;
 
     public static final String EXTERNAL_DB_NAME = "/sdcard/bibles.sqlite";
-    public static final int EXTERNAL_DB_VERSION = 12;
+    public static final int EXTERNAL_DB_VERSION = 14;
 
     public static final int DATAMANAGE_BACKUP = 0;
     public static final int DATAMANAGE_RESTORE = 1;
@@ -42,6 +42,7 @@ public final class Constants {
         public static final String CHAPTER = "chapter";
         public static final String VERSE = "verse";
         public static final String CONTENTS = "contents";
+        public static final String STYLE = "style";
 
         public static final int COL_ID = 0;
         public static final int COL_VERCODE = 1;
@@ -51,6 +52,7 @@ public final class Constants {
         public static final int COL_CHAPTER = 5;
         public static final int COL_VERSE = 6;
         public static final int COL_CONTENTS = 7;
+        public static final int COL_STYLE = 8;
 
     }
 
