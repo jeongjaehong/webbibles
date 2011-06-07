@@ -35,11 +35,14 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -49,8 +52,10 @@ import android.widget.AdapterView.OnItemSelectedListener;
 public class Song extends Activity implements OnClickListener {
     private final HttpClient Client = new DefaultHttpClient();
     private SongsDao dao;
-    private TextView txtview;
+    private TextView song_text;
+    private LinearLayout mSongtext;
     private TextView edt_songid;
+    private Spinner spin_version;
 
     public static final int MENU_AUTO_LOAD = Menu.FIRST;
     public static final int MENU_AUTO_RELOAD = Menu.FIRST + 1;
@@ -62,7 +67,7 @@ public class Song extends Activity implements OnClickListener {
     Button btn_prev;
     Button btn_next;
     Button btn_img;
-    ScrollView imgview;
+    ScrollView songimg;
     ImageView songview;
     int mVersion;
     int songid;
@@ -71,11 +76,16 @@ public class Song extends Activity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         setContentView(R.layout.song_view);
 
-        txtview = (TextView) findViewById(R.id.song_text);
+        mSongtext = (LinearLayout) findViewById(R.id.songtext);
+        song_text = (TextView) findViewById(R.id.song_text);
         songview = (ImageView) findViewById(R.id.songview);
-        imgview = (ScrollView) findViewById(R.id.songimg);
+        songimg = (ScrollView) findViewById(R.id.songimg);
         btn_goto = (Button) findViewById(R.id.btn_goto);
         btn_goto.setOnClickListener(this);
 
@@ -88,7 +98,7 @@ public class Song extends Activity implements OnClickListener {
         btn_img = (Button) findViewById(R.id.btn_img);
         btn_img.setOnClickListener(this);
 
-        imgview.setOnClickListener(this);
+        songimg.setOnClickListener(this);
 
         songview.setOnCreateContextMenuListener(this);
 
@@ -99,12 +109,12 @@ public class Song extends Activity implements OnClickListener {
 
         edt_songid = (TextView) findViewById(R.id.song_id);
 
-        Spinner spin_version = (Spinner) findViewById(R.id.songversion);
+        spin_version = (Spinner) findViewById(R.id.songversion);
         spin_version.setOnItemSelectedListener(new VersionSelectedListener());
 
         this.setTitle(this.getResources().getString(R.string.song_title) + " " + songid + "¿Â");
 
-        btn_next.requestFocus();
+        spin_version.requestFocus();
 
     }
 
@@ -114,11 +124,14 @@ public class Song extends Activity implements OnClickListener {
 
         dao = new SongsDao(this, null, Prefs.getSDCardUse(this));
         loadContents();
+        
+        spin_version.requestFocus();
 
     }
 
     @Override
     protected void onPause() {
+
         super.onPause();
 
         if (dao != null)
@@ -158,9 +171,9 @@ public class Song extends Activity implements OnClickListener {
                 break;
             case R.id.btn_img:
 
-                if (txtview.getVisibility() == View.VISIBLE) {
-                    txtview.setVisibility(View.GONE);
-                    imgview.setVisibility(View.VISIBLE);
+                if (mSongtext.getVisibility() == View.VISIBLE) {
+                    mSongtext.setVisibility(View.GONE);
+                    songimg.setVisibility(View.VISIBLE);
 
                     //  File SDCardRoot = Environment.getExternalStorageDirectory();
                     //  Environment.getDataDirectory()
@@ -171,22 +184,22 @@ public class Song extends Activity implements OnClickListener {
 
                     //Uri uri = Uri.parse("content:/" + Environment.getExternalStorageDirectory() + "/NHYMN/" + imageid + ".gif");
 
-                    //imgview.setImageURI(uri);
+                    //songimg.setImageURI(uri);
 
                 } else {
-                    txtview.setVisibility(View.VISIBLE);
-                    imgview.setVisibility(View.GONE);
+                    mSongtext.setVisibility(View.VISIBLE);
+                    songimg.setVisibility(View.GONE);
                 }
                 break;
 
             case R.id.songimg:
 
-                //txtview.setVisibility(View.VISIBLE);
-                //imgview.setVisibility(View.GONE);
+                //song_text.setVisibility(View.VISIBLE);
+                //songimg.setVisibility(View.GONE);
                 break;
 
         }
-        if (imgview.getVisibility() == View.VISIBLE) {
+        if (songimg.getVisibility() == View.VISIBLE) {
             String imageid = songid + "";
             imageid = imageid.length() == 1 ? "00" + imageid : imageid;
             imageid = imageid.length() == 2 ? "0" + imageid : imageid;
@@ -333,7 +346,7 @@ public class Song extends Activity implements OnClickListener {
                 c = dao.querySongsText(mVersion, songid);
 
                 if (c.moveToNext()) {
-                    txtview.setText(c.getString(Songs.COL_SONGTEXT));
+                    song_text.setText(c.getString(Songs.COL_SONGTEXT));
                     songtitle.setText(c.getString(Songs.COL_SUBJECT) + "\n " + c.getString(Songs.COL_TITLE));
                 }
 
@@ -347,7 +360,7 @@ public class Song extends Activity implements OnClickListener {
 
         } else {
 
-            txtview.setText(c.getString(Songs.COL_SONGTEXT));
+            song_text.setText(c.getString(Songs.COL_SONGTEXT));
             songtitle.setText(c.getString(Songs.COL_SUBJECT) + "\n " + c.getString(Songs.COL_TITLE));
         }
 

@@ -56,10 +56,6 @@ public class BibleMain extends Activity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Prefs.getFullScr(getBaseContext())) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
-
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         dao = new BookmarkDao(this, null, Prefs.getSDCardUse(this));
