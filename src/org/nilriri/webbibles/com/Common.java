@@ -25,7 +25,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.telephony.SmsManager;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class Common extends Activity {
@@ -80,10 +79,10 @@ public class Common extends Activity {
     //public static final String myPhoneNumber = "00000000000";
 
     public static String getMyPhoneNumber(Context context) {
-        TelephonyManager mTelephonyMgr;
-        mTelephonyMgr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        //TelephonyManager mTelephonyMgr;
+        //mTelephonyMgr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         //return mTelephonyMgr.getLine1Number();
-        Log.d("PhoneNumber", mTelephonyMgr.getLine1Number());
+        //Log.d("PhoneNumber", mTelephonyMgr.getLine1Number());
         return "00000000000";
     }
 

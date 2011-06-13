@@ -19,7 +19,6 @@ import org.nilriri.webbibles.dao.BookmarkDao;
 import org.nilriri.webbibles.dao.FavoritesDao;
 import org.nilriri.webbibles.dao.Constants.Bibles;
 import org.nilriri.webbibles.dao.Constants.FavoriteGroup;
-import org.nilriri.webbibles.dao.Constants.Notes;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -39,6 +38,7 @@ import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -54,6 +54,7 @@ import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -282,6 +283,10 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
             Log.d(Common.TAG, "============ReloadBibleContents========");
             this.ReloadBibleContents();
         }
+
+        ((FrameLayout) findViewById(R.id.bibleviewer)).setBackgroundColor(Prefs.getBackgroundColor(this));
+        mListView.setBackgroundColor(Prefs.getBackgroundColor(this));
+
     }
 
     @Override
@@ -1239,6 +1244,7 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
 
                             SpannableString str = new SpannableString(mCursor.getString(7));
                             str.setSpan(new BackgroundColorSpan(getResources().getColor(R.color.lightpen_color)), 0, str.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
                             contents.setText(str);
                         } catch (Exception e) {
 
@@ -1246,6 +1252,15 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
                     } else {
                         contents.setText(mCursor.getString(7));
                     }
+
+                    if ("".equals(versestr.getText())) {
+                        contents.setGravity(Gravity.CENTER);
+                    } else {
+                        contents.setGravity(Gravity.LEFT);
+                    }
+
+                    contents.setTextColor(Prefs.getFontColor(getBaseContext()));
+
                 }
                 if (comment != null) {
                     String comments = mCursor.getString(mCursor.getColumnIndexOrThrow("comment"));

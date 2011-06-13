@@ -10,9 +10,8 @@
 		android:layout_height="fill_parent" android:orientation="horizontal"
 		android:padding="2sp">
 		<Spinner android:id="@+id/groups" style="?android:attr/buttonStyleSmall"
-			android:layout_width="150dip" 
-			android:layout_height="wrap_content" />
-		
+			android:layout_width="150dip" android:layout_height="wrap_content" />
+
 	</RelativeLayout>
 
 	<ListView android:id="@+id/ContentsListView"

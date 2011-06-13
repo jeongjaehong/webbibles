@@ -6,9 +6,9 @@
 	android:layout_width="fill_parent" android:layout_height="wrap_content">
 
 	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/actionbuttons" android:layout_width="fill_parent"
-	android:layout_height="wrap_content" android:orientation="horizontal"
-	android:padding="2sp" android:gravity="right">
+		android:id="@+id/actionbuttons" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:orientation="horizontal"
+		android:padding="2sp" android:gravity="right">
 
 		<Button android:id="@+id/btn_allcheck" android:text="@string/btn_allcheck"
 			style="?android:attr/buttonStyleSmall" android:layout_width="100dip"

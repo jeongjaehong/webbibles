@@ -10,19 +10,6 @@
 	<CheckBoxPreference android:key="sdcarduse"
 		android:title="@string/sdcarduse" android:summary="@string/sdcarduse_summary"
 		android:defaultValue="true" />
-	<CheckBoxPreference android:key="gmailuse"
-		android:title="Send mail by GMail" android:defaultValue="false"
-		android:summary="Do you want to send mail using gmail?" />
-	<PreferenceCategory android:title="GMail Account"
-		android:dependency="gmailuse" android:enabled="false" android:key="GoogleAccountInfo">
-		<EditTextPreference android:key="username"
-			android:defaultValue="jeongjaehong@gmail.com" android:title="Google Account"
-			android:summary="GMail Address ( userid@gmail.com )"
-			android:dependency="gmailuse" />
-		<EditTextPreference android:key="password"
-			android:password="true" android:defaultValue="" android:title="Password"
-			android:summary="Google Account Password" android:dependency="gmailuse" />
-	</PreferenceCategory>
 	<ListPreference android:key="fontsize"
 		android:title="@string/title_list_preference" android:summary="@string/summary_list_preference"
 		android:entries="@array/entries_list_preference" android:entryValues="@array/entryvalues_list_preference"
@@ -38,6 +25,22 @@
 	<CheckBoxPreference android:key="theme"
 		android:title="위젯 글자 색상" android:defaultValue="false"
 		android:summary="위젯의 글자색상을 검정색으로 사용하시겠습니까?" />
+
+
+	<ListPreference android:key="backgroundcolor"
+		android:title="성경읽기 배경색상" android:summary="성경읽기 화면의 배경색상을 선택하십시오."
+		android:entries="@array/viewer_colors" android:entryValues="@array/viewer_colors_value"
+		 android:dialogTitle="배경색 선택" />
+
+	<ListPreference android:key="fontcolor" android:title="성경읽기 글자색상"
+		android:summary="성경읽기 화면에 사용할 글자색을 선택하십시오." android:entries="@array/viewer_colors"
+		android:entryValues="@array/viewer_colors_value" 
+		android:dialogTitle="글자색 선택" />
+
+
+
+
+
 	<CheckBoxPreference android:key="calendar"
 		android:title="Calendar 사용" android:defaultValue="true"
 		android:summary="Calendar를 이용하여 맥체인성경읽기 표를 사용하시려면 선택하십시오." />

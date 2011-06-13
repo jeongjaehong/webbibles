@@ -3,9 +3,11 @@
 	<string name="overview">
 		AndroidExamples
 		\n\n
-		Demonstrates database usage, minimal UI/form, AsyncTask, and Application.
+		Demonstrates database usage,
+		minimal UI/form, AsyncTask, and Application.
 		\n
-		For more information, see tutorial at totsp.com -- more to come.
+		For more information,
+		see tutorial at totsp.com -- more to come.
 	</string>
 	<string name="app_name">AndroidExamples</string>
 	<string name="in_label">Add name to database</string>

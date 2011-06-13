@@ -3,9 +3,8 @@ package org.nilriri.webbibles.com;
 import org.nilriri.webbibles.R;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
@@ -24,15 +23,6 @@ public class Prefs extends PreferenceActivity {
     private static final String OPT_SDCARDUSE = "sdcarduse";
     private static final boolean OPT_SDCARDUSE_DEF = true;
 
-    private static final String OPT_GCALENDARSYNC = "gmailuse";
-    private static final boolean OPT_GCALENDARSYNC_DEF = false;
-
-    private static final String OPT_GMAILUSERID = "username";
-    private static final String OPT_GMAILUSERID_DEF = "userid@gmail.com";
-
-    private static final String OPT_GMAILPASSWORD = "password";
-    private static final String OPT_GMAILPASSWORD_DEF = "xxx";
-
     private static final String OPT_FONTSIZE = "fontsize";
     private static final String OPT_FONTSIZE_DEF = "16";
 
@@ -44,28 +34,22 @@ public class Prefs extends PreferenceActivity {
 
     private static final String OPT_THEME = "theme";
     private static final boolean OPT_THEME_DEF = false;
-    
+
     private static final String OPT_CALENDAR = "calendar";
     private static final boolean OPT_CALENDAR_DEF = true;
+
+    private static final String OPT_BACKGROUND_COLOR = "backgroundcolor";
+
+    private static final String OPT_FONT_COLOR = "fontcolor";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
 
-        findPreference("GoogleAccountInfo").setEnabled(((CheckBoxPreference) findPreference("gmailuse")).isChecked());
-
         if (!Common.AdminNumber.contains(Common.getMyPhoneNumber(getBaseContext()))) {
             findPreference("sdcarduse").setEnabled(false);
         }
-
-        findPreference("gmailuse").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                CheckBoxPreference cpf = (CheckBoxPreference) preference;
-                findPreference("GoogleAccountInfo").setEnabled(cpf.isChecked());
-                return false;
-            }
-        });
 
     }
 
@@ -73,7 +57,7 @@ public class Prefs extends PreferenceActivity {
     public void onContentChanged() {
         super.onContentChanged();
         //if (Prefs.getSDCardUse(this.getBaseContext()) && !Common.isSdPresent()) {
-        if (!Common.AdminNumber.contains(Common.getMyPhoneNumber(getBaseContext())))  {
+        if (!Common.AdminNumber.contains(Common.getMyPhoneNumber(getBaseContext()))) {
             PreferenceManager.getDefaultSharedPreferences(this.getBaseContext()).edit().putBoolean(OPT_SDCARDUSE, false).commit();
 
             Toast.makeText(getBaseContext(), getBaseContext().getResources().getString(R.string.sdcarduse_notinstall), Toast.LENGTH_LONG).show();
@@ -111,10 +95,6 @@ public class Prefs extends PreferenceActivity {
 
     }
 
-    public static boolean getGCalendarSync(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(OPT_GCALENDARSYNC, OPT_GCALENDARSYNC_DEF);
-    }
-
     public static boolean getCompare(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(OPT_COMPARE, OPT_COMPARE_DEF);
     }
@@ -127,16 +107,74 @@ public class Prefs extends PreferenceActivity {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(OPT_THEME, OPT_THEME_DEF);
     }
 
-    public static String getGMailUserID(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(OPT_GMAILUSERID, OPT_GMAILUSERID_DEF);
-    }
-
-    public static String getGMailPassword(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(OPT_GMAILPASSWORD, OPT_GMAILPASSWORD_DEF);
-    }
-    
     public static boolean getCalendar(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(OPT_CALENDAR, OPT_CALENDAR_DEF);
     }
 
+    public static int getBackgroundColor(Context context) {
+        try {
+            String c = PreferenceManager.getDefaultSharedPreferences(context).getString(OPT_BACKGROUND_COLOR, Color.WHITE + "");
+            switch (Integer.parseInt(c)) {
+                case 0:
+                    return Color.BLACK;
+                case 1:
+                    return Color.DKGRAY;
+                case 2:
+                    return Color.GRAY;
+                case 3:
+                    return Color.LTGRAY;
+                default:
+                case 4:
+                    return Color.WHITE;
+                case 5:
+                    return Color.RED;
+                case 6:
+                    return Color.GREEN;
+                case 7:
+                    return Color.BLUE;
+                case 8:
+                    return Color.YELLOW;
+                case 9:
+                    return Color.CYAN;
+                case 10:
+                    return Color.MAGENTA;
+            }
+        } catch (Exception e) {
+            return Color.WHITE;
+        }
+    }
+
+    public static int getFontColor(Context context) {
+
+        try {
+            String c = PreferenceManager.getDefaultSharedPreferences(context).getString(OPT_FONT_COLOR, Color.DKGRAY + "");
+            switch (Integer.parseInt(c)) {
+                case 0:
+                    return Color.BLACK;
+                default:
+                case 1:
+                    return Color.DKGRAY;
+                case 2:
+                    return Color.GRAY;
+                case 3:
+                    return Color.LTGRAY;
+                case 4:
+                    return Color.WHITE;
+                case 5:
+                    return Color.RED;
+                case 6:
+                    return Color.GREEN;
+                case 7:
+                    return Color.BLUE;
+                case 8:
+                    return Color.YELLOW;
+                case 9:
+                    return Color.CYAN;
+                case 10:
+                    return Color.MAGENTA;
+            }
+        } catch (Exception e) {
+            return Color.DKGRAY;
+        }
+    }
 }

@@ -4,8 +4,8 @@
 	android:layout_width="fill_parent" android:layout_height="fill_parent">
 	<!-- android:paddingBottom="45dip" -->
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:orientation="vertical" 
-		android:layout_width="fill_parent" android:layout_height="wrap_content">
+		android:orientation="vertical" android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
 
 
 		<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -74,10 +74,9 @@
 				android:layout_below="@id/spinner2" android:layout_alignRight="@id/spinbible"
 				android:visibility="gone" />
 
-			<Spinner android:id="@+id/spinsong" 
-				android:layout_height="wrap_content" style="?android:attr/buttonStyleSmall"
-				android:layout_width="75dip" 
-				 android:visibility="gone"/>
+			<Spinner android:id="@+id/spinsong" android:layout_height="wrap_content"
+				style="?android:attr/buttonStyleSmall" android:layout_width="75dip"
+				android:visibility="gone" />
 
 
 
@@ -155,15 +154,15 @@
 				android:scaleType="centerInside" android:layout_alignParentBottom="true" />
 		</RelativeLayout>
 	</LinearLayout>
-<!-- 
-	<LinearLayout android:orientation="vertical"
-		android:layout_width="fill_parent" android:layout_height="fill_parent">
-		<FrameLayout android:layout_width="fill_parent"
-			android:layout_height="fill_parent" android:layout_weight="1" />
-		<com.livepoint.smartad.sdk.SmartAdView
-			android:id="@+id/ad_view" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" app:view_mode="bottom" />
-	</LinearLayout>
- -->
+	<!--
+		<LinearLayout android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"> <FrameLayout
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:layout_weight="1" /> <com.livepoint.smartad.sdk.SmartAdView
+		android:id="@+id/ad_view" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" app:view_mode="bottom" />
+		</LinearLayout>
+	-->
 </FrameLayout>
 

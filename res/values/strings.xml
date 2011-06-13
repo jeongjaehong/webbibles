@@ -12,7 +12,7 @@
 
 	<string name="menu_bookmarklist">책갈피</string>
 	<string name="menu_auto_load">Auto Download</string>
-	
+
 
 	<string name="menu_allnote">전체 노트</string>
 	<string name="menu_booksnote">성경별 노트</string>
@@ -31,7 +31,7 @@
 	<string name="menu_sendmail">메일보내기</string>
 	<string name="menu_share">공유/SNS</string>
 	<string name="menu_style">형광펜/제거</string>
-	
+
 
 	<string name="menu_favorites">즐겨찾기 추가</string>
 	<string name="menu_changegroup">즐겨찾기 그룹변경</string>
@@ -127,7 +127,7 @@
 	<string name="sdcarduse_notinstall">외부 메모리를 사용할 수 없는 상태입니다.</string>
 
 	<string name="widget_label_4x2">온라인성경(4x2)</string>
-	
+
 	<string name="widget_desc">온라인성경 - 즐겨찾기 위젯</string>
 
 	<string name="settings_label">설정...</string>

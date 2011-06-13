@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/biblecontents" android:layout_width="fill_parent"
 	android:layout_height="fill_parent" android:orientation="horizontal"
-	android:padding="10sp" >
+	android:padding="10sp">
 	<TableLayout android:id="@+id/TableLayout01"
 		android:layout_height="fill_parent" android:layout_width="fill_parent"
 		android:paddingTop="40dip">
@@ -13,8 +13,8 @@
 
 			<TextView android:layout_column="1" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:text="@string/app_caption"
-				android:textColor="@color/orange_color"
-				android:textSize="40sp" android:textStyle="bold" />
+				android:textColor="@color/orange_color" android:textSize="40sp"
+				android:textStyle="bold" />
 		</TableRow>
 		<TableRow android:id="@+id/TableRow02" android:layout_height="wrap_content"
 			android:layout_width="fill_parent">
