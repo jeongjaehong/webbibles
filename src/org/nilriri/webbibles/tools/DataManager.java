@@ -6,6 +6,7 @@ import org.nilriri.webbibles.dao.Constants;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -40,6 +41,7 @@ public class DataManager extends Activity implements OnClickListener {
     public static final int LOAD_DAYS = 3;
 
     private ListView mListView = null;
+
     //private Long mBibleID = new Long(-1);
     //private int mVersion = -1;
     //private int mBook = -1;
@@ -107,7 +109,6 @@ public class DataManager extends Activity implements OnClickListener {
         return super.onOptionsItemSelected(item);
     }
 
-  
     public class listOnItemClickListener implements OnItemClickListener {
 
         public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
@@ -141,14 +142,14 @@ public class DataManager extends Activity implements OnClickListener {
                 case 3:
                     intent.setClass(getBaseContext(), VersionSelector.class);
                     intent.putExtra("DATAMANAGE_WORK", Constants.DATAMANAGE_DELEXTERNAL);
-                    
+
                     if (Prefs.getSDCardUse(getBaseContext())) {
                         startActivity(intent);
                     } else {
                         Toast.makeText(DataManager.this, "외부저장소 접근 불가.", Toast.LENGTH_LONG).show();
                         return;
-                    }  
-                    
+                    }
+
                     startActivity(intent);
                     break;
                 case 4:
@@ -167,8 +168,18 @@ public class DataManager extends Activity implements OnClickListener {
 
                     /* Send it off to the Activity-Chooser */
                     startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-     
+
                     break;
+                case 6:
+                    Intent browserIntent = new Intent(android.content.Intent.ACTION_VIEW);
+
+                    browserIntent.setAction(Intent.ACTION_VIEW);
+                    browserIntent.setData(Uri.parse("http://nilriri.blogspot.com/search/label/온라인성경"));
+
+                    startActivity(browserIntent);
+
+                    break;
+
             }
 
         }

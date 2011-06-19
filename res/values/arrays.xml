@@ -8,7 +8,8 @@
 		<item>내부메모리에서 삭제하기</item>
 		<item>SD카드에서 삭제하기</item>
 		<item>성경 본문 다운받기</item>
-		<item>개발자에게 메일보내기</item>
+		<item>Feedback (email)</item>
+		<item>홈페이지 방문</item>
 	</string-array>
 
 	<string-array name="songversion">

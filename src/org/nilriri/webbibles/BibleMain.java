@@ -11,6 +11,7 @@ import org.nilriri.webbibles.tools.SearchData;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -277,6 +278,28 @@ public class BibleMain extends Activity implements OnClickListener {
                 startActivity(new Intent(this, Prefs.class));
                 break;
             }
+            case R.id.blog:
+                Intent browserIntent = new Intent(android.content.Intent.ACTION_VIEW);
+
+                browserIntent.setAction(Intent.ACTION_VIEW);
+                browserIntent.setData(Uri.parse("http://nilriri.blogspot.com/search/label/온라인성경"));
+
+                startActivity(browserIntent);
+
+                break;
+            case R.id.email:
+                final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND_MULTIPLE);
+
+                /* Fill it with Data */
+                emailIntent.setType("plain/text");
+                emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] { "jeongjaehong@gmail.com" });
+                emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "[LunarCalendar]Feedback...");
+                emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "* 폰 모델:\n* 버젼:\n* 증상:\n* 상황설명:\n\n[LunarCalendar]");
+
+                /* Send it off to the Activity-Chooser */
+                startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+
+                break;
 
         }
         return super.onOptionsItemSelected(item);
@@ -497,7 +520,7 @@ public class BibleMain extends Activity implements OnClickListener {
                         intent.setAction("org.nilriri.lunarcalendar.MAIN");
                         intent.setType("vnd.org.nilriri/lunarcalendar");
                         intent.putExtra("BIBLEPLAN", true);
-                        
+
                     } else {
 
                         //intent.setClass(getBaseContext(), BibleViewer.class);
