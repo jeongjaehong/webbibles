@@ -143,7 +143,11 @@ public class Song extends Activity implements OnClickListener {
     public void onClick(View v) {
         String songtext = edt_songid.getText().toString();
         songtext = songtext == null || "".equals(songtext) ? songid + "" : songtext;
-        songid = Integer.parseInt(songtext);
+        try {
+            songid = Integer.parseInt(songtext);
+        } catch (Exception e) {
+            songid = 1;
+        }
 
         switch (v.getId()) {
             case R.id.btn_goto:
@@ -205,12 +209,12 @@ public class Song extends Activity implements OnClickListener {
             imageid = imageid.length() == 2 ? "0" + imageid : imageid;
 
             File SDCardRoot = Environment.getExternalStorageDirectory();
-            File file = new File(SDCardRoot, ""+(mVersion==0?"NHYMN":"HYMN")+"/" + imageid + ""+(mVersion==0?".gif":".jpg")+"");
+            File file = new File(SDCardRoot, "" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
 
-            Log.d("WebBibles", "content:/" + Environment.getExternalStorageDirectory() + "/"+(mVersion==0?"NHYMN":"HYMN")+"/" + imageid + ""+(mVersion==0?".gif":".jpg")+"");
+            Log.d("WebBibles", "content:/" + Environment.getExternalStorageDirectory() + "/" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
 
             if (file.exists()) {
-                Bitmap bm = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/"+(mVersion==0?"NHYMN":"HYMN")+"/" + imageid + ""+(mVersion==0?".gif":".jpg")+"");
+                Bitmap bm = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
                 if (bm == null) {
                     file.delete();
                     this.loadImage(imageid);
@@ -375,13 +379,13 @@ public class Song extends Activity implements OnClickListener {
             File SDCardRoot = Environment.getExternalStorageDirectory();
             //create a new file, specifying the path, and the filename
             //which we want to save the file as.
-            File file = new File(SDCardRoot, ""+(mVersion==0?"NHYMN":"HYMN")+"/" + imageid + ""+(mVersion==0?".gif":".jpg")+"");
+            File file = new File(SDCardRoot, "" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
 
             if (!file.exists()) {
 
                 //set the download URL, a url that points to a file on the internet
                 //this is the file to be downloaded
-                URL url = new URL("http://m.holybible.or.kr/"+(mVersion==0?"NHYMN":"HYMN")+"/HYMN_SCR/" + imageid + ""+(mVersion==0?".gif":".jpg")+"");
+                URL url = new URL("http://m.holybible.or.kr/" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/HYMN_SCR/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
 
                 //create the new connection
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -399,12 +403,12 @@ public class Song extends Activity implements OnClickListener {
                 SDCardRoot = Environment.getExternalStorageDirectory();
                 //create a new file, specifying the path, and the filename
                 //which we want to save the file as.
-                file = new File(SDCardRoot, ""+(mVersion==0?"NHYMN":"HYMN")+"");
+                file = new File(SDCardRoot, "" + (mVersion == 0 ? "NHYMN" : "HYMN") + "");
 
                 if (!file.exists())
                     file.mkdir();
 
-                file = new File(SDCardRoot, ""+(mVersion==0?"NHYMN":"HYMN")+"/" + imageid + ""+(mVersion==0?".gif":".jpg")+"");
+                file = new File(SDCardRoot, "" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
 
                 //this will be used to write the downloaded data into the file we created
                 FileOutputStream fileOutput = new FileOutputStream(file);
@@ -436,10 +440,10 @@ public class Song extends Activity implements OnClickListener {
 
             }
 
-            file = new File(SDCardRoot, ""+(mVersion==0?"NHYMN":"HYMN")+"/" + imageid + ""+(mVersion==0?".gif":".jpg")+"");
+            file = new File(SDCardRoot, "" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
 
             if (file.exists()) {
-                Bitmap bm = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/"+(mVersion==0?"NHYMN":"HYMN")+"/" + imageid + ""+(mVersion==0?".gif":".jpg")+"");
+                Bitmap bm = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
                 // Log.d("xxx", "content:/" + Environment.getExternalStorageDirectory() + "/"+(mVersion==0?"NHYMN":"HYMN")+"/" + imageid + ""+(mVersion==0?".gif":".jpg")+"");
                 songview.setImageBitmap(bm);
             }
@@ -502,7 +506,7 @@ public class Song extends Activity implements OnClickListener {
                 imageid = imageid.length() == 1 ? "00" + imageid : imageid;
                 imageid = imageid.length() == 2 ? "0" + imageid : imageid;
 
-                File imgFile = new File(Environment.getExternalStorageDirectory() + "/"+(mVersion==0?"NHYMN":"HYMN")+"/" + imageid + ""+(mVersion==0?".gif":".jpg")+"");
+                File imgFile = new File(Environment.getExternalStorageDirectory() + "/" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
 
                 Log.d("WebBibles", "Path=" + imgFile.getAbsolutePath());
 
@@ -560,7 +564,7 @@ public class Song extends Activity implements OnClickListener {
                 Cursor c = autoDao.querySongsText(mVersion, songid);
 
                 File SDCardRoot = Environment.getExternalStorageDirectory();
-                File file = new File(SDCardRoot, ""+(mVersion==0?"NHYMN":"HYMN")+"/" + imageid + ""+(mVersion==0?".gif":".jpg")+"");
+                File file = new File(SDCardRoot, "" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
 
                 try {
                     if (!c.moveToNext() || !file.exists()) {
@@ -573,7 +577,7 @@ public class Song extends Activity implements OnClickListener {
 
                                 //set the download URL, a url that points to a file on the internet
                                 //this is the file to be downloaded
-                                URL url = new URL("http://m.holybible.or.kr/"+(mVersion==0?"NHYMN":"HYMN")+"/HYMN_SCR/" + imageid + ""+(mVersion==0?".gif":".jpg")+"");
+                                URL url = new URL("http://m.holybible.or.kr/" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/HYMN_SCR/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
 
                                 //create the new connection
                                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -591,12 +595,12 @@ public class Song extends Activity implements OnClickListener {
                                 SDCardRoot = Environment.getExternalStorageDirectory();
                                 //create a new file, specifying the path, and the filename
                                 //which we want to save the file as.
-                                file = new File(SDCardRoot, ""+(mVersion==0?"NHYMN":"HYMN")+"");
+                                file = new File(SDCardRoot, "" + (mVersion == 0 ? "NHYMN" : "HYMN") + "");
 
                                 if (!file.exists())
                                     file.mkdir();
 
-                                file = new File(SDCardRoot, ""+(mVersion==0?"NHYMN":"HYMN")+"/" + imageid + ""+(mVersion==0?".gif":".jpg")+"");
+                                file = new File(SDCardRoot, "" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
 
                                 //this will be used to write the downloaded data into the file we created
                                 FileOutputStream fileOutput = new FileOutputStream(file);

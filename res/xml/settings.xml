@@ -28,14 +28,13 @@
 
 
 	<ListPreference android:key="backgroundcolor"
-		android:title="성경읽기 배경색상" android:summary="성경읽기 화면의 배경색상을 선택하십시오."
+		android:title="성경읽기 배경색상" android:summary="성경읽기 화면의 배경색상을 선택하십시오.\n종료 후 재시작해야 적용됩니다."
 		android:entries="@array/viewer_colors" android:entryValues="@array/viewer_colors_value"
-		 android:dialogTitle="배경색 선택" />
+		android:dialogTitle="배경색 선택" />
 
 	<ListPreference android:key="fontcolor" android:title="성경읽기 글자색상"
 		android:summary="성경읽기 화면에 사용할 글자색을 선택하십시오." android:entries="@array/viewer_colors"
-		android:entryValues="@array/viewer_colors_value" 
-		android:dialogTitle="글자색 선택" />
+		android:entryValues="@array/viewer_colors_value" android:dialogTitle="글자색 선택" />
 
 
 

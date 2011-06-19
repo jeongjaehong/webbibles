@@ -117,15 +117,16 @@ public class Prefs extends PreferenceActivity {
             switch (Integer.parseInt(c)) {
                 case 0:
                     return Color.BLACK;
+                default:
                 case 1:
                     return Color.DKGRAY;
                 case 2:
                     return Color.GRAY;
                 case 3:
                     return Color.LTGRAY;
-                default:
                 case 4:
                     return Color.WHITE;
+              /*
                 case 5:
                     return Color.RED;
                 case 6:
@@ -138,6 +139,7 @@ public class Prefs extends PreferenceActivity {
                     return Color.CYAN;
                 case 10:
                     return Color.MAGENTA;
+                    */
             }
         } catch (Exception e) {
             return Color.WHITE;
@@ -151,12 +153,12 @@ public class Prefs extends PreferenceActivity {
             switch (Integer.parseInt(c)) {
                 case 0:
                     return Color.BLACK;
-                default:
                 case 1:
                     return Color.DKGRAY;
                 case 2:
                     return Color.GRAY;
                 case 3:
+                default:
                     return Color.LTGRAY;
                 case 4:
                     return Color.WHITE;

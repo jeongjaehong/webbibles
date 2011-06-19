@@ -20,7 +20,8 @@
 			<ImageView android:layout_height="wrap_content" android:id="@+id/app_icons"
 				android:src="@drawable/c3tv" android:adjustViewBounds="true"
 				android:layout_width="wrap_content" android:maxWidth="100dip"
-				android:maxHeight="50dip" android:scaleType="centerInside" />
+				android:maxHeight="50dip" android:scaleType="centerInside"
+				android:visibility="invisible" />
 
 			<TextView android:id="@+id/blank_line0" android:gravity="left"
 				android:layout_below="@id/app_icons" android:layout_width="wrap_content"

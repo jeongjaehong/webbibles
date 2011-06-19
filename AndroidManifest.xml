@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.nilriri.webbibles" android:installLocation="auto"
-	android:versionName="3.3.10" android:versionCode="201">
+	android:versionName="3.4.2" android:versionCode="203">
 	<application android:icon="@drawable/app_notes"
 		android:label="@string/app_name" android:allowClearUserData="false"
 		android:restoreAnyVersion="true" android:debuggable="false"
@@ -47,7 +47,7 @@
 			android:theme="@android:style/Theme.Light"
 		-->
 		<activity android:name=".BibleViewer" android:label="@string/app_caption"
-			android:theme="@android:style/Theme.Light" android:screenOrientation="user"
+			android:screenOrientation="user"
 			android:configChanges="screenLayout|keyboardHidden|orientation">
 			<intent-filter>
 				<action android:name="org.nilriri.webbibles.VIEW" />
@@ -118,8 +118,7 @@
 			android:theme="@android:style/Theme.Dialog">
 		</activity>
 
-		<activity android:name=".Song" android:label="@string/song_title"
-			android:screenOrientation="landscape">
+		<activity android:name=".Song" android:label="@string/song_title" android:screenOrientation="sensor">
 		</activity>
 
 		<activity android:name=".tools.BibleSearchList"

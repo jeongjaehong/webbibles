@@ -17,4 +17,26 @@
 		<attr name="view_mode" format="string" />
 	</declare-styleable>
 
+	<style name="listdkgray">
+		<item name="android:divider">#ddd</item>
+	</style>
+	
+	<style name="dkgray">
+		<item name="android:windowBackground">@android:color/darker_gray</item>
+		<item name="android:colorBackground">@android:color/darker_gray</item>
+		<item name="android:listViewStyle">@style/listdkgray</item>		
+	</style>
+
+	<style name="lightgray">
+		<item name="android:windowBackground">@android:color/darker_gray</item>
+		<item name="android:colorBackground">#ddd</item>
+		<item name="android:listViewStyle">@style/listdkgray</item>		
+	</style>
+
+	<style name="gray">
+		<item name="android:windowBackground">@android:color/darker_gray</item>
+		<item name="android:colorBackground">#ccc</item>
+		<item name="android:listViewStyle">@style/listdkgray</item>		
+	</style>
+
 </resources>

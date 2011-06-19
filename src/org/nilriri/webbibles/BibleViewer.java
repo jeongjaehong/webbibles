@@ -28,6 +28,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources.NotFoundException;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -146,6 +147,25 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
 
         setDefaultKeyMode(DEFAULT_KEYS_SHORTCUT);
 
+        switch (Prefs.getBackgroundColor(this)) {
+            case Color.LTGRAY:
+                setTheme(R.style.lightgray);
+                break;
+            case Color.GRAY:
+                setTheme(R.style.gray);
+                break;
+            case Color.DKGRAY:
+                setTheme(R.style.dkgray);
+                break;
+            case Color.BLACK:
+                setTheme(android.R.style.Theme_Black);
+                break;
+            default:
+            case Color.WHITE:
+                setTheme(android.R.style.Theme_Light);
+                break;
+        }
+
         //if (Prefs.getTheme(this)) {
         //setTheme(android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         //} else {
@@ -196,6 +216,7 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
         mListView.setOnTouchListener(this);
         mListView.setOnItemClickListener(new listOnItemClickListener());
         mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        mListView.setBackgroundColor(Prefs.getBackgroundColor(this));
 
         ((Button) findViewById(R.id.reading)).setOnClickListener(this);
 
