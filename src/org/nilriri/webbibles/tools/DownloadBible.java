@@ -248,27 +248,22 @@ public class DownloadBible extends Activity implements OnClickListener {
     };
 
     private boolean parsingBibleSource(String HTMLSource) {
-        if (HTMLSource.indexOf("tdBible1") < 0)
-            return false;
-
-        HTMLSource = HTMLSource.substring(HTMLSource.indexOf("tdBible1"));
+        Log.d(TAG, "RegExpr Result^^ = " + HTMLSource);
+        HTMLSource = HTMLSource.substring(HTMLSource.indexOf("<td id=\"tdBible1\""));
+        Log.d(TAG, "RegExpr Result&& = " + HTMLSource);
+        Log.d(TAG, "RegExpr Result HTMLSource.indexOf(\"tdBible1\") = " + HTMLSource.indexOf("tdBible1"));
+        //HTMLSource = HTMLSource.substring(HTMLSource.indexOf("tdBible1"));
         //Content = Content.substring(Content.indexOf("tdBible2"));
-        HTMLSource = HTMLSource.substring(HTMLSource.indexOf(">") + 1);
+
+        Log.d(TAG, "RegExpr Result00 = " + HTMLSource);
+        //HTMLSource = HTMLSource.substring(HTMLSource.indexOf(">") + 1);
         HTMLSource = HTMLSource.substring(0, HTMLSource.indexOf("/td>") - 1);
+        Log.d(TAG, "RegExpr Result11 = " + HTMLSource);
 
         HTMLSource = HTMLSource.replace("<br>", "\n");
         HTMLSource = HTMLSource.replace("<BR>", "\n");
         HTMLSource = HTMLSource.replace("&nbsp;&nbsp;&nbsp;", "##");
-
-        while (HTMLSource.indexOf("<div") >= 0 && HTMLSource.indexOf(">", HTMLSource.indexOf("<div")) >= 0) {
-
-            String target = HTMLSource.substring(HTMLSource.indexOf("<div"), HTMLSource.indexOf(">", HTMLSource.indexOf("<div")) + 1);
-            HTMLSource = HTMLSource.replace(target, "( ");
-
-        }
-        HTMLSource = HTMLSource.replace("</div>", " )");
-        HTMLSource = HTMLSource.replace("<BR>", "\n");
-
+        Log.d(TAG, "RegExpr Result22 = " + HTMLSource);
         Matcher matcher = Pattern.compile("<(\"[^\"]*\"|'[^']*'|[^'\">])*>").matcher("");
 
         StringBuffer result = new StringBuffer();

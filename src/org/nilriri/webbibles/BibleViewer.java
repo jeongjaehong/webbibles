@@ -1197,7 +1197,6 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
 
                 return true;
 
-
         }
 
         return super.onOptionsItemSelected(item);
@@ -1287,7 +1286,9 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
                             //str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 21, str.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                             SpannableString str = new SpannableString(mCursor.getString(7));
-                            str.setSpan(new BackgroundColorSpan(getResources().getColor(R.color.lightpen_color)), 0, str.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            
+                            //str.setSpan(new BackgroundColorSpan(getResources().getColor(R.color.lightpen_color)), 0, str.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            str.setSpan(new BackgroundColorSpan(Prefs.getPenColor(getBaseContext())), 0, str.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                             contents.setText(str);
                         } catch (Exception e) {
@@ -1484,7 +1485,7 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
 
                 } else {
 
-                    favoritesDao.insertFavorites(new Long(group), versestr, contents, mVersion, mBook, mChapter, mVerse);
+                    favoritesDao.insertFavorites(new Long(group - 1), versestr, contents, mVersion, mBook, mChapter, mVerse);
                 }
             }
 

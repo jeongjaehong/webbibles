@@ -440,13 +440,19 @@ public class BibleMain extends Activity implements OnClickListener {
             Cursor c = (Cursor) parent.getItemAtPosition(pos);
 
             if (c != null) {
-                Intent intent = new Intent();
-                intent.setClass(getBaseContext(), BibleViewer.class);
-                intent.putExtra("VERSION", c.getInt(Bookmark.COL_VERSION));
-                intent.putExtra("BOOK", c.getInt(Bookmark.COL_BOOK));
-                intent.putExtra("CHAPTER", c.getInt(Bookmark.COL_CHAPTER));
-                intent.putExtra("VERSE", c.getInt(Bookmark.COL_VERSE));
-                startActivity(intent);
+                if (c.getInt(Bookmark.COL_ID) == 9999998) {
+                    Intent intent = new Intent();
+                    intent.setClass(getBaseContext(), BookmarkList.class);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent();
+                    intent.setClass(getBaseContext(), BibleViewer.class);
+                    intent.putExtra("VERSION", c.getInt(Bookmark.COL_VERSION));
+                    intent.putExtra("BOOK", c.getInt(Bookmark.COL_BOOK));
+                    intent.putExtra("CHAPTER", c.getInt(Bookmark.COL_CHAPTER));
+                    intent.putExtra("VERSE", c.getInt(Bookmark.COL_VERSE));
+                    startActivity(intent);
+                }
             }
 
             return;

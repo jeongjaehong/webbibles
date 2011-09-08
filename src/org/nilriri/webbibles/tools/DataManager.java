@@ -3,11 +3,16 @@ package org.nilriri.webbibles.tools;
 import org.nilriri.webbibles.R;
 import org.nilriri.webbibles.com.Prefs;
 import org.nilriri.webbibles.dao.Constants;
+import org.nilriri.webbibles.dao.FavoritesDao;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,6 +47,10 @@ public class DataManager extends Activity implements OnClickListener {
 
     private ListView mListView = null;
 
+    public FavoritesDao daoSource;
+    public ProgressDialog pd;
+    public String Error = "";
+    
     //private Long mBibleID = new Long(-1);
     //private int mVersion = -1;
     //private int mBook = -1;
@@ -185,7 +194,61 @@ public class DataManager extends Activity implements OnClickListener {
         }
 
     }
+    
 
+    
+    public void StartBackup() {
+
+        daoSource = new FavoritesDao(getBaseContext(), null, Prefs.getSDCardUse(getBaseContext()));
+
+        
+        pd = new ProgressDialog(getBaseContext());
+
+        pd.setTitle("Backup!");
+        pd.setMessage("Backup schedule data...");
+
+        //pd.setCancelable(true);
+        pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+
+        //pd.setIndeterminate(true);
+        pd.show();
+
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Cursor cursor = daoSource.queryAll(-1);
+                    if (!daoSource.exportdata(cursor, pd)) {
+                        Error = "백업이 실패하였습니다.";
+                    } else {
+                        Error = "";
+                    }
+                    cursor.close();
+                    handler.sendEmptyMessage(0);
+
+                } catch (Exception e) {
+                    handler.sendEmptyMessage(0);
+                    Error = e.getMessage();
+                }
+            }
+        }).start();
+    }
+
+    public Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            pd.dismiss();
+
+            if ("".equals(Error)) {
+                Toast.makeText(getBaseContext(), "작업이 정상적으로 완료 되었습니다.", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getBaseContext(), Error, Toast.LENGTH_LONG).show();
+            }
+        }
+    };    
+    
+    
+    
+    
     @Override
     public void onClick(View v) {
         // TODO Auto-generated method stub

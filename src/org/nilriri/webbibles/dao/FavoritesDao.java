@@ -1,8 +1,13 @@
 package org.nilriri.webbibles.dao;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Calendar;
+
 import org.nilriri.webbibles.dao.Constants.FavoriteGroup;
 import org.nilriri.webbibles.dao.Constants.Favorites;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,9 +16,11 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.util.Log;
 
 public class FavoritesDao extends AbstractDao {
+    Context mContext;
 
     public FavoritesDao(Context context, CursorFactory factory, boolean sdcarduse) {
         super(context, factory, sdcarduse);
+        mContext = context;
     }
 
     public void deleteFavorite(Long id) {
@@ -114,8 +121,8 @@ public class FavoritesDao extends AbstractDao {
 
         //기존 그룹의 자료를 다른자료로 변경한다.
         query.append(" UPDATE " + Favorites.FAVORITES_TABLE_NAME + " ");
-        query.append(" SET " + Favorites.COL_GROUPKEY + " = 0 ");
-        query.append(" WHERE " + Favorites.COL_GROUPKEY + " = " + oldGroup);
+        query.append(" SET " + Favorites.GROUPKEY + " = 0 ");
+        query.append(" WHERE " + Favorites.GROUPKEY + " = " + oldGroup);
 
         db.execSQL(query.toString());
 
@@ -187,6 +194,79 @@ public class FavoritesDao extends AbstractDao {
 
         return getReadableDatabase().rawQuery(query.toString(), null);
 
+    }
+
+    public Cursor queryAll(long p_groupkey) {
+
+        StringBuffer query = new StringBuffer();
+
+        query.append(" SELECT  ");
+        query.append("  f.* ");
+        query.append(" FROM " + Favorites.FAVORITES_TABLE_NAME + " f ");
+        query.append(" WHERE 1=1 ");
+        if (p_groupkey >= 0) {
+            query.append(" AND f." + Favorites.GROUPKEY + " = " + p_groupkey);
+        }
+        query.append(" ORDER BY f." + Favorites.GROUPKEY + ", " + " f." + Favorites._ID + "  ");
+
+        return getReadableDatabase().rawQuery(query.toString(), null);
+
+    }
+
+    public boolean exportdata(Cursor cursor, ProgressDialog pd) {
+        String path = android.os.Environment.getExternalStorageDirectory().toString() + "/";
+        Calendar c = Calendar.getInstance();
+        c.setFirstDayOfWeek(Calendar.SUNDAY);
+
+        StringBuilder backupdate = new StringBuilder(c.get(Calendar.YEAR)).append(c.get(Calendar.MONTH) + 1).append(c.get(Calendar.DAY_OF_MONTH));
+
+        File file = new File(path + "favorites" + backupdate + ".db");
+        pd.setMax(cursor.getCount() + 10);
+        if (file.exists()) {
+            if (file.delete()) {
+                file = new File(path + "favorites" + backupdate + ".db");
+            } else {
+                file = new File(path + "favorites" + backupdate + ".db");
+                if (file.exists()) {
+                    return false;
+                }
+            }
+        }
+
+        pd.setProgress(10);
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+
+            StringBuilder buf = new StringBuilder(Favorites._ID);
+            buf.append("\t" + Favorites.BIBLEID);
+            buf.append("\t" + Favorites.BOOK);
+            buf.append("\t" + Favorites.CHAPTER);
+            buf.append("\t" + Favorites.CONTENTS);
+            buf.append("\t" + Favorites.FAVORITES_TABLE_NAME);
+            buf.append("\t" + Favorites.GROUPKEY);
+            buf.append("\t" + Favorites.GROUPNM);
+            buf.append("\t" + Favorites.VERSE);
+            buf.append("\t" + Favorites.VERSESTR);
+            buf.append("\t" + Favorites.VERSION);
+            buf.append("\n\r");
+
+            cursor.moveToFirst();
+            while (cursor.getCount() > 0) {
+                pd.setProgress(cursor.getPosition() + 10);
+                for (int col = 0; col < cursor.getColumnCount(); col++) {
+                    buf.append(cursor.getString(col)).append("\t");
+                }
+                buf.append("\n\r");
+                if (!cursor.moveToNext())
+                    break;
+            }
+            fos.write(buf.toString().getBytes());
+            fos.close();
+            return true;
+        } catch (Exception e) {
+            Log.e("Export", e.getMessage(), e);
+            return false;
+        }
     }
 
 }

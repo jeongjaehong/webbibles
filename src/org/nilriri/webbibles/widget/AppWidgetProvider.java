@@ -84,7 +84,7 @@ public class AppWidgetProvider extends android.appwidget.AppWidgetProvider {
         //views.setTextViewText(R.id.appwidget_text, mDday_msg);
 
         remoteViews.setTextViewText(R.id.contents, contents);
-        //remoteViews.setTextColor(R.id.contents, R.color.orange_color);
+        remoteViews.setTextColor(R.id.contents, Prefs.getWFontColor(context));
 
         //remoteViews.setImageViewResource(R.id.sync, R.drawable.widget_background_orange);
 

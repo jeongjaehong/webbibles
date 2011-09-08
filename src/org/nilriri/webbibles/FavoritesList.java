@@ -23,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
@@ -163,11 +164,9 @@ public class FavoritesList extends Activity implements OnClickListener {
         menu.add(0, MENU_ITEM_DELFAVORITE, 0, R.string.menu_delfavorite);
         menu.add(0, MENU_ITEM_CHANGEGROUP, 0, R.string.menu_changegroup);
         menu.add(0, MENU_ITEM_DELETEGROUP, 0, R.string.menu_deletegroup);
-         
+
         menu.add(0, MENU_ITEM_SENDSMS, 0, R.string.menu_sendsms);
         menu.add(0, MENU_ITEM_SCHEDULESMS, 0, R.string.menu_schedulesms);
-        
-        
 
     }
 
@@ -225,7 +224,13 @@ public class FavoritesList extends Activity implements OnClickListener {
 
                 Cursor c = (Cursor) mListView.getItemAtPosition(info.position);
 
-                dao.deleteFavoritesGroup(c.getInt(Favorites.COL_GROUPKEY));
+                int delkey = c.getInt(Favorites.COL_GROUPKEY);
+
+                if (delkey == 0) {
+                    Toast.makeText(this, "기본그룹은 삭제할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                } else {
+                    dao.deleteFavoritesGroup(delkey);
+                }
 
                 return true;
             }

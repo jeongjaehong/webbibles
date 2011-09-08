@@ -22,10 +22,18 @@
 	<CheckBoxPreference android:key="fullscr"
 		android:title="전체화면" android:defaultValue="false"
 		android:summary="성경읽기창을 전체화면으로 확대해서사용하시겠습니까?" />
-	<CheckBoxPreference android:key="theme"
-		android:title="위젯 글자 색상" android:defaultValue="false"
-		android:summary="위젯의 글자색상을 검정색으로 사용하시겠습니까?" />
 
+	<ListPreference android:key="widgetfontcolor" android:title="위젯 글자 색상"
+		android:summary="위젯에 사용할 글자 색상을  선택하십시오.\n배경화면 색상을 고려하여 색상을 선택하십시오." android:entries="@array/viewer_colors"
+		android:entryValues="@array/viewer_colors_value" android:dialogTitle="위젯 글자색 선택" />
+
+	<CheckBoxPreference android:key="theme"
+		android:title="위젯 배경 색상" android:defaultValue="false"
+		android:summary="위젯의 배경색상을 검정색으로 사용하시려면 선택하십시오.\n투명배경을 사용하시려면 선택하지 마십시오." />
+
+	<ListPreference android:key="pencolor" android:title="형광펜 색상"
+		android:summary="성경읽기 화면에 사용할 형광펜색을 선택하십시오.\n글자색과 다른 색상을 선택하십시오." android:entries="@array/viewer_colors"
+		android:entryValues="@array/viewer_colors_value" android:dialogTitle="형광펜 배경색 선택" />
 
 	<ListPreference android:key="backgroundcolor"
 		android:title="성경읽기 배경색상" android:summary="성경읽기 화면의 배경색상을 선택하십시오.\n종료 후 재시작해야 적용됩니다."

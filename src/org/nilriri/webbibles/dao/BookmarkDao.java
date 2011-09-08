@@ -83,7 +83,7 @@ public class BookmarkDao extends AbstractDao {
         StringBuffer query = new StringBuffer();
 
         query.append(" SELECT  ");
-        query.append("  0 " + Bookmark._ID);
+        query.append("  9999999 " + Bookmark._ID);
         query.append(" ,0 " + Bookmark.VERCODE);
         query.append(" ,0 " + Bookmark.BIBLEID);
         query.append(" ,0 " + Bookmark.VERSION);
@@ -91,7 +91,18 @@ public class BookmarkDao extends AbstractDao {
         query.append(" ,0 " + Bookmark.CHAPTER);
         query.append(" ,0 " + Bookmark.VERSE);
         query.append(" ,strftime('%Y-%m-%d','now','localtime') " + Bookmark.MODIFIED_DATE);
-        query.append(" ,'Bookmark' " + Bookmark.VERSESTR);
+        query.append(" ,'책갈피' " + Bookmark.VERSESTR);
+        query.append(" UNION ALL  ");
+        query.append(" SELECT  ");
+        query.append("  9999998 " + Bookmark._ID);
+        query.append(" ,0 " + Bookmark.VERCODE);
+        query.append(" ,0 " + Bookmark.BIBLEID);
+        query.append(" ,0 " + Bookmark.VERSION);
+        query.append(" ,0 " + Bookmark.BOOK);
+        query.append(" ,0 " + Bookmark.CHAPTER);
+        query.append(" ,0 " + Bookmark.VERSE);
+        query.append(" ,strftime('%Y-%m-%d','now','localtime') " + Bookmark.MODIFIED_DATE);
+        query.append(" ,'책갈피 목록' " + Bookmark.VERSESTR);
         query.append(" UNION ALL  ");
         query.append(" SELECT  ");
         query.append("  " + Bookmark._ID);
@@ -105,7 +116,7 @@ public class BookmarkDao extends AbstractDao {
         query.append(" ," + Bookmark.VERSESTR);
         query.append(" FROM " + Bookmark.BOOKMARK_TABLE_NAME + " ");
 
-        query.append(" ORDER BY " + Bookmark.MODIFIED_DATE + " DESC, _id ASC ");
+        query.append(" ORDER BY " + Bookmark.MODIFIED_DATE + " DESC, _id DESC ");
         if (limit > 0) {
             query.append(" LIMIT " + limit);
         }
@@ -126,7 +137,7 @@ public class BookmarkDao extends AbstractDao {
         query.append("  9999999 " + Favorites._ID);
         query.append(" ,0 " + Favorites.BIBLEID);
         query.append(" ,0 " + Favorites.GROUPKEY);
-        query.append(" ,'Favorites' " + Favorites.VERSESTR);
+        query.append(" ,'즐겨찾기' " + Favorites.VERSESTR);
         query.append(" ,0 " + Favorites.VERSION);
         query.append(" ,0 " + Favorites.BOOK);
         query.append(" ,0 " + Favorites.CHAPTER);
@@ -137,7 +148,7 @@ public class BookmarkDao extends AbstractDao {
         query.append("  9999998 " + Favorites._ID);
         query.append(" ,0 " + Favorites.BIBLEID);
         query.append(" ,0 " + Favorites.GROUPKEY);
-        query.append(" ,'Favorites 목록' " + Favorites.VERSESTR);
+        query.append(" ,'즐겨찾기 목록' " + Favorites.VERSESTR);
         query.append(" ,0 " + Favorites.VERSION);
         query.append(" ,0 " + Favorites.BOOK);
         query.append(" ,0 " + Favorites.CHAPTER);

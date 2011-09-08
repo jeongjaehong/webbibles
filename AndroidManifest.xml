@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.nilriri.webbibles" android:installLocation="auto"
-	android:versionName="3.4.3" android:versionCode="204">
+	android:versionCode="210" android:versionName="3.4.10">
 	<application android:icon="@drawable/app_notes"
 		android:label="@string/app_name" android:allowClearUserData="false"
 		android:restoreAnyVersion="true" android:debuggable="false"
@@ -89,7 +89,7 @@
 			android:label="@string/title_sendmail">
 		</activity>
 
-		<activity android:name=".BookmarkList" android:theme="@android:style/Theme.Dialog"
+		<activity android:name=".BookmarkList" android:theme="@android:style/Theme.Light"
 			android:label="@string/title_bookmark">
 		</activity>
 

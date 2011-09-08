@@ -160,6 +160,8 @@ public class NoteEditor extends Activity implements OnClickListener {
 
     @Override
     public void onClick(View v) {
+        
+        if (misComment)return;
 
         switch (v.getId()) {
             case R.id.notetitle:
@@ -187,7 +189,13 @@ public class NoteEditor extends Activity implements OnClickListener {
             setTitle(getText(R.string.title_newnote));
 
             mVerseStr.setText(mBibleShortName[mBook] + " " + (mChapter + 1) + ":" + (mVerse));
-            mNoteTitle.setText(getText(R.string.new_init_title));
+            String title = getText(R.string.new_init_title).toString();
+            
+            if("".equals(title)) title = "제목없음";
+            
+            if (this.misComment) title = "라인주석";
+            
+            mNoteTitle.setText(title);
             mModifiedDate.setText(Common.fmtDate(Calendar.getInstance()));
 
         }
