@@ -60,6 +60,7 @@ public class Song extends Activity implements OnClickListener {
     public static final int MENU_AUTO_LOAD = Menu.FIRST;
     public static final int MENU_AUTO_RELOAD = Menu.FIRST + 1;
     public static final int MENU_ITEM_OPENVIEW = Menu.FIRST + 2;
+    public static final int MENU_ITEM_LISTVIEW = Menu.FIRST + 3;
 
     String mTitleUrl[] = { "http://bible.c3tv.com/hymn/hymn_player_new.asp?hymn_idx=", "http://bible.c3tv.com/hymn/hymn_player.asp?hymn_idx=" };
     String mContentsUrl[] = { "http://bible.c3tv.com/hymn/hymn_text_new.asp?hymn_idx=", "http://bible.c3tv.com/hymn/hymn_text.asp?hymn_idx=" };
@@ -70,7 +71,7 @@ public class Song extends Activity implements OnClickListener {
     ScrollView songimg;
     ImageView songview;
     int mVersion;
-    int songid;
+    int mSongid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +85,7 @@ public class Song extends Activity implements OnClickListener {
 
         mSongtext = (LinearLayout) findViewById(R.id.songtext);
         song_text = (TextView) findViewById(R.id.song_text);
+
         songview = (ImageView) findViewById(R.id.songview);
         songimg = (ScrollView) findViewById(R.id.songimg);
         btn_goto = (Button) findViewById(R.id.btn_goto);
@@ -105,14 +107,14 @@ public class Song extends Activity implements OnClickListener {
         Intent i = getIntent();
         //mUrl = i.getStringExtra("url");
         mVersion = i.getIntExtra("version", 0);
-        songid = i.getIntExtra("songid", 0);
+        mSongid = i.getIntExtra("mSongid", 0);
 
         edt_songid = (TextView) findViewById(R.id.song_id);
 
         spin_version = (Spinner) findViewById(R.id.songversion);
         spin_version.setOnItemSelectedListener(new VersionSelectedListener());
 
-        this.setTitle(this.getResources().getString(R.string.song_title) + " " + songid + "장");
+        this.setTitle(this.getResources().getString(R.string.song_title) + " " + mSongid + "장");
 
         spin_version.requestFocus();
 
@@ -142,35 +144,35 @@ public class Song extends Activity implements OnClickListener {
     @Override
     public void onClick(View v) {
         String songtext = edt_songid.getText().toString();
-        songtext = songtext == null || "".equals(songtext) ? songid + "" : songtext;
+        songtext = songtext == null || "".equals(songtext) ? mSongid + "" : songtext;
         try {
-            songid = Integer.parseInt(songtext);
+            mSongid = Integer.parseInt(songtext);
         } catch (Exception e) {
-            songid = 1;
+            mSongid = 1;
         }
 
         switch (v.getId()) {
             case R.id.btn_goto:
 
-                this.setTitle(this.getResources().getString(R.string.song_title) + " " + songid + "장");
-                edt_songid.setText(songid + "");
+                this.setTitle(this.getResources().getString(R.string.song_title) + " " + mSongid + "장");
+                edt_songid.setText(mSongid + "");
                 loadContents();
                 break;
             case R.id.btn_prev:
 
-                songid = songid > 1 ? songid - 1 : songid;
-                this.setTitle(this.getResources().getString(R.string.song_title) + " " + songid + "장");
-                edt_songid.setText(songid + "");
+                mSongid = mSongid > 1 ? mSongid - 1 : mSongid;
+                this.setTitle(this.getResources().getString(R.string.song_title) + " " + mSongid + "장");
+                edt_songid.setText(mSongid + "");
                 loadContents();
                 break;
             case R.id.btn_next:
                 if (mVersion == 0) {
-                    songid = songid < 645 ? songid + 1 : songid - 1;
+                    mSongid = mSongid < 645 ? mSongid + 1 : mSongid - 1;
                 } else {
-                    songid = songid < 558 ? songid + 1 : songid - 1;
+                    mSongid = mSongid < 558 ? mSongid + 1 : mSongid - 1;
                 }
-                this.setTitle(this.getResources().getString(R.string.song_title) + " " + songid + "장");
-                edt_songid.setText(songid + "");
+                this.setTitle(this.getResources().getString(R.string.song_title) + " " + mSongid + "장");
+                edt_songid.setText(mSongid + "");
                 loadContents();
                 break;
             case R.id.btn_img:
@@ -204,7 +206,7 @@ public class Song extends Activity implements OnClickListener {
 
         }
         if (songimg.getVisibility() == View.VISIBLE) {
-            String imageid = songid + "";
+            String imageid = mSongid + "";
             imageid = imageid.length() == 1 ? "00" + imageid : imageid;
             imageid = imageid.length() == 2 ? "0" + imageid : imageid;
 
@@ -249,21 +251,21 @@ public class Song extends Activity implements OnClickListener {
 
     private void loadContents() {
 
-        songid = mVersion == 1 && songid > 558 ? 558 : songid;
-        songid = mVersion == 0 && songid > 645 ? 645 : songid;
+        mSongid = mVersion == 1 && mSongid > 558 ? 558 : mSongid;
+        mSongid = mVersion == 0 && mSongid > 645 ? 645 : mSongid;
 
-        String imageid = songid + "";
+        String imageid = mSongid + "";
         imageid = imageid.length() == 1 ? "00" + imageid : imageid;
         imageid = imageid.length() == 2 ? "0" + imageid : imageid;
 
-        Cursor c = dao.querySongsText(mVersion, songid);
+        Cursor c = dao.querySongsText(mVersion, mSongid);
         TextView songtitle = (TextView) findViewById(R.id.song_title);
 
         if (!c.moveToNext()) {
 
             loadImage(imageid);
 
-            HttpGet httpget = new HttpGet(mTitleUrl[mVersion] + songid);
+            HttpGet httpget = new HttpGet(mTitleUrl[mVersion] + mSongid);
             ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
             try {
@@ -306,7 +308,7 @@ public class Song extends Activity implements OnClickListener {
 
                 songtitle.setText(song_title.trim());
 
-                httpget = new HttpGet(mContentsUrl[mVersion] + songid);
+                httpget = new HttpGet(mContentsUrl[mVersion] + mSongid);
 
                 HTMLSource = Client.execute(httpget, responseHandler);
 
@@ -345,9 +347,9 @@ public class Song extends Activity implements OnClickListener {
                 res = new String(HTMLSource.getBytes("8859_1"), "KSC5601");
                 ////////////////////////////////////////
 
-                dao.insert(mVersion, songid, res, song_title.split("\n")[0], song_title.split("\n")[1], "");
+                dao.insert(mVersion, mSongid, res, song_title.split("\n")[0], song_title.split("\n")[1], "");
 
-                c = dao.querySongsText(mVersion, songid);
+                c = dao.querySongsText(mVersion, mSongid);
 
                 if (c.moveToNext()) {
                     song_text.setText(c.getString(Songs.COL_SONGTEXT));
@@ -480,6 +482,9 @@ public class Song extends Activity implements OnClickListener {
         MenuItem item6 = menu.add(0, MENU_ITEM_OPENVIEW, 0, "확대보기");
         item6.setIcon(android.R.drawable.ic_menu_slideshow);
 
+        MenuItem item7 = menu.add(0, MENU_ITEM_LISTVIEW, 0, "목록보기");
+        item7.setIcon(android.R.drawable.ic_menu_agenda);
+
         return true;
     }
 
@@ -502,7 +507,7 @@ public class Song extends Activity implements OnClickListener {
                 return true;
             }
             case MENU_ITEM_OPENVIEW: {
-                String imageid = songid + "";
+                String imageid = mSongid + "";
                 imageid = imageid.length() == 1 ? "00" + imageid : imageid;
                 imageid = imageid.length() == 2 ? "0" + imageid : imageid;
 
@@ -516,8 +521,23 @@ public class Song extends Activity implements OnClickListener {
 
                 return true;
             }
+            case MENU_ITEM_LISTVIEW: {
+
+                Intent intent = new Intent();
+
+                intent.setClass(getBaseContext(), SongList.class);
+
+                //intent.putExtra("url", "http://bible.c3tv.com/hymn/hymn_text_new.asp?hymn_idx=");
+                //intent.putExtra("url", "http://bible.c3tv.com/hymn/hymn_player_new.asp?hymn_idx=");
+                intent.putExtra("version", mVersion);
+                intent.putExtra("mSongid", mSongid);
+
+                startActivity(intent);
+
+                return true;
+            }
             case MENU_AUTO_RELOAD: {
-                String imageid = songid + "";
+                String imageid = mSongid + "";
                 imageid = imageid.length() == 1 ? "00" + imageid : imageid;
                 imageid = imageid.length() == 2 ? "0" + imageid : imageid;
 
@@ -552,16 +572,16 @@ public class Song extends Activity implements OnClickListener {
 
             autoDao = new SongsDao(getBaseContext(), null, Prefs.getSDCardUse(getBaseContext()));
 
-            for (songid = 1; songid <= max; songid++) {
-                Dialog.setProgress(songid);
-                songid = mVersion == 1 && songid > 558 ? 558 : songid;
-                songid = mVersion == 0 && songid > 645 ? 645 : songid;
+            for (mSongid = 1; mSongid <= max; mSongid++) {
+                Dialog.setProgress(mSongid);
+                mSongid = mVersion == 1 && mSongid > 558 ? 558 : mSongid;
+                mSongid = mVersion == 0 && mSongid > 645 ? 645 : mSongid;
 
-                String imageid = songid + "";
+                String imageid = mSongid + "";
                 imageid = imageid.length() == 1 ? "00" + imageid : imageid;
                 imageid = imageid.length() == 2 ? "0" + imageid : imageid;
 
-                Cursor c = autoDao.querySongsText(mVersion, songid);
+                Cursor c = autoDao.querySongsText(mVersion, mSongid);
 
                 File SDCardRoot = Environment.getExternalStorageDirectory();
                 File file = new File(SDCardRoot, "" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
@@ -631,7 +651,7 @@ public class Song extends Activity implements OnClickListener {
                                 fileOutput.close();
                             }
 
-                            HttpGet httpget = new HttpGet(mTitleUrl[mVersion] + songid);
+                            HttpGet httpget = new HttpGet(mTitleUrl[mVersion] + mSongid);
                             ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
                             ///////////////////////////////
@@ -672,7 +692,7 @@ public class Song extends Activity implements OnClickListener {
                             song_title = song_title.replace("[제목]", "\n[제목]");
                             song_title = song_title.replace("  ", "");
 
-                            httpget = new HttpGet(mContentsUrl[mVersion] + songid);
+                            httpget = new HttpGet(mContentsUrl[mVersion] + mSongid);
 
                             HTMLSource = autoClient.execute(httpget, responseHandler);
 
@@ -711,7 +731,7 @@ public class Song extends Activity implements OnClickListener {
                             res = new String(HTMLSource.getBytes("8859_1"), "KSC5601");
                             ////////////////////////////////////////
 
-                            autoDao.insert(mVersion, songid, res, song_title.split("\n")[0], song_title.split("\n")[1], "");
+                            autoDao.insert(mVersion, mSongid, res, song_title.split("\n")[0], song_title.split("\n")[1], "");
 
                         } catch (ClientProtocolException e) {
                             downError = e.getMessage();

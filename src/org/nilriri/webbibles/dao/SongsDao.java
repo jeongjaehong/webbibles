@@ -60,7 +60,7 @@ public class SongsDao extends AbstractDao {
 
     }
 
-    public Cursor querySongsList() {
+    public Cursor querySongsList(int version) {
 
         SQLiteDatabase db = getReadableDatabase();
 
@@ -70,13 +70,14 @@ public class SongsDao extends AbstractDao {
         query.append("  " + Songs._ID);
         query.append(" ," + Songs.VERSION);
         query.append(" ," + Songs.SONGID);
-        query.append(" ," + Songs.SONGTEXT);
+        query.append(" ,substr(" + Songs.SONGTEXT +", 1, 20) " + Songs.SONGTEXT);
         query.append(" ," + Songs.SUBJECT);
         query.append(" ," + Songs.TITLE);
 
         query.append(" FROM " + Songs.SONGS_TABLE_NAME + " ");
+        query.append(" WHERE " + Songs.VERSION + " = " + version);
 
-        query.append(" ORDER BY _id ASC ");
+        query.append(" ORDER BY " + Songs.VERSION + "," + Songs.SONGID + "  ");
 
         Cursor cursor = db.rawQuery(query.toString(), null);
 

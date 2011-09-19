@@ -468,7 +468,7 @@ public class NotesList extends Activity implements OnClickListener {
             uri = ContentUris.withAppendedId(uri, cur_index.getInt(COLUMN_INDEX_CHAPTER));
             uri = ContentUris.withAppendedId(uri, cur_index.getInt(COLUMN_INDEX_VERSE));
 
-            MenuItem item = menu.add(0, MENU_ITEM_BIBLEVIEW, 0, cur_index.getString(COLUMN_INDEX_VERSESTR));
+            MenuItem item = menu.add(0, MENU_ITEM_SONGVIEW, 0, cur_index.getString(COLUMN_INDEX_VERSESTR));
 
             item.setIntent(new Intent(Intent.ACTION_VIEW, uri));
 
@@ -497,7 +497,7 @@ public class NotesList extends Activity implements OnClickListener {
                 return true;
             }
             case MENU_ITEM_BIBLEVIEW: {
-                Log.e(TAG, "MENU_ITEM_BIBLEVIEW uri = " + item.getIntent().getData().toString());
+                Log.e(TAG, "MENU_ITEM_SONGVIEW uri = " + item.getIntent().getData().toString());
                 startActivity(item.getIntent());
                 return true;
             }

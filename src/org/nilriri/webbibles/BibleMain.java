@@ -412,12 +412,12 @@ public class BibleMain extends Activity implements OnClickListener {
 
                 intent.putExtra("url", "http://bible.c3tv.com/hymn/hymn_text_new.asp?hymn_idx=" + (pos));
                 intent.putExtra("version", 1);
-                intent.putExtra("songid", pos);
+                intent.putExtra("mSongid", pos);
 
             } else {
                 intent.putExtra("url", "http://bible.c3tv.com/hymn/hymn_text.asp?hymn_idx=" + (pos));
                 intent.putExtra("version", 2);
-                intent.putExtra("songid", pos);
+                intent.putExtra("mSongid", pos);
             }
 
             startActivity(intent);
@@ -559,12 +559,12 @@ public class BibleMain extends Activity implements OnClickListener {
 
             case R.id.btn_song:
 
-                intent.setClass(getBaseContext(), Song.class);
+                intent.setClass(getBaseContext(), SongList.class);
 
                 //intent.putExtra("url", "http://bible.c3tv.com/hymn/hymn_text_new.asp?hymn_idx=");
                 //intent.putExtra("url", "http://bible.c3tv.com/hymn/hymn_player_new.asp?hymn_idx=");
                 intent.putExtra("version", 0);
-                intent.putExtra("songid", 1);
+                intent.putExtra("mSongid", 1);
 
                 startActivity(intent);
                 break;

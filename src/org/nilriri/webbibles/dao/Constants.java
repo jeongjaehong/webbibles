@@ -170,7 +170,7 @@ public final class Constants {
 
         public static final String _ID = "_id";
         public static final String VERSION = "version";
-        public static final String SONGID = "songid";
+        public static final String SONGID = "mSongid";
         public static final String SONGTEXT = "songtext";
         public static final String SUBJECT = "subject";
         public static final String TITLE = "title";

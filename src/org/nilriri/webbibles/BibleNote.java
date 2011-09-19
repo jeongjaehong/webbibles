@@ -302,12 +302,12 @@ public class BibleNote extends Activity implements OnClickListener {
 
                 intent.putExtra("url", "http://bible.c3tv.com/hymn/hymn_text_new.asp?hymn_idx=" + (pos));
                 intent.putExtra("version", 1);
-                intent.putExtra("songid", pos);
+                intent.putExtra("mSongid", pos);
 
             } else {
                 intent.putExtra("url", "http://bible.c3tv.com/hymn/hymn_text.asp?hymn_idx=" + (pos));
                 intent.putExtra("version", 2);
-                intent.putExtra("songid", pos);
+                intent.putExtra("mSongid", pos);
             }
 
             startActivity(intent);
