@@ -66,7 +66,7 @@ public class SongsDao extends AbstractDao {
 
         StringBuffer query = new StringBuffer();
 
-        query.append(" SELECT  ");
+        query.append(" SELECT DISTINCT ");
         query.append("  " + Songs._ID);
         query.append(" ," + Songs.VERSION);
         query.append(" ," + Songs.SONGID);
