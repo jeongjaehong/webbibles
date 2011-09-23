@@ -60,7 +60,31 @@ public class SongsDao extends AbstractDao {
 
     }
 
-    public Cursor querySongsList(int version) {
+    public Cursor querySubjectList(int version) {
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        StringBuffer query = new StringBuffer();
+
+        query.append(" SELECT 0 _id, '' subject ");
+        query.append(" UNION ALL ");
+        query.append(" SELECT ");
+        query.append(" MIN(" + Songs._ID + ") _id ");
+        query.append(" ," + Songs.SUBJECT);
+        query.append(" FROM " + Songs.SONGS_TABLE_NAME + " ");
+        query.append(" WHERE " + Songs.VERSION + " = " + version);
+        query.append(" GROUP BY " + Songs.SUBJECT + "  ");
+        
+        query.append(" ORDER BY 1 ");
+
+        Cursor cursor = db.rawQuery(query.toString(), null);
+
+        return cursor;
+
+    }
+
+    
+    public Cursor querySongsList(int version, String subject) {
 
         SQLiteDatabase db = getReadableDatabase();
 
@@ -76,6 +100,10 @@ public class SongsDao extends AbstractDao {
 
         query.append(" FROM " + Songs.SONGS_TABLE_NAME + " ");
         query.append(" WHERE " + Songs.VERSION + " = " + version);
+        
+        if(!"".equals(subject)){
+            query.append(" AND " + Songs.SUBJECT + " = '" + subject +"'");
+        }
 
         query.append(" ORDER BY " + Songs.VERSION + "," + Songs.SONGID + "  ");
 

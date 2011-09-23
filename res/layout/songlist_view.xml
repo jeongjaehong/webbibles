@@ -11,12 +11,15 @@
 		android:padding="2sp">
 
 		<Spinner android:id="@+id/songversion" android:entries="@array/songversion"
-			style="?android:attr/buttonStyleSmall" android:layout_width="50dip"
+			style="?android:attr/buttonStyleSmall" android:layout_width="120dip"
 			android:layout_height="wrap_content" />
+		<Spinner android:id="@+id/subject" 
+			style="?android:attr/buttonStyleSmall" android:layout_width="1800dip"
+			android:layout_toRightOf="@id/songversion" android:layout_height="wrap_content" />
 	</RelativeLayout>
 
 	<ListView android:id="@+id/ContentsListView"
-		android:layout_height="wrap_content" android:layout_width="wrap_content">
+		android:fastScrollEnabled="true" android:layout_height="wrap_content" android:layout_width="wrap_content">
 	</ListView>
 
 </LinearLayout>

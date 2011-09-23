@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 public class SongList extends Activity {
     private static final String TAG = "SongList";
@@ -34,6 +35,8 @@ public class SongList extends Activity {
 
     private ListView mListView = null;
     private Spinner mSongversion = null;
+    private Spinner mSubject = null;
+    private String mSubjectText = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +49,51 @@ public class SongList extends Activity {
         setDefaultKeyMode(DEFAULT_KEYS_SHORTCUT);
 
         mSongversion = (Spinner) findViewById(R.id.songversion);
+        mSubject = (Spinner) findViewById(R.id.subject);
+
+        mSongversion.setOnItemSelectedListener(new VersionSelectedListener());
+        mSubject.setOnItemSelectedListener(new SubjectSelectedListener());
+
+        Cursor cursor = dao.querySubjectList(0);
+        SimpleCursorAdapter subjectAdapter = new SimpleCursorAdapter(getBaseContext(), android.R.layout.simple_spinner_item, cursor, new String[] { Songs.SUBJECT }, new int[] { android.R.id.text1 });
+        subjectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSubject.setAdapter(subjectAdapter);
 
         mListView = (ListView) findViewById(R.id.ContentsListView);
         mListView.setOnCreateContextMenuListener(this);
         mListView.setOnItemClickListener(new listOnItemClickListener());
 
+    }
+
+    public class SubjectSelectedListener implements OnItemSelectedListener {
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+
+            mSubjectText = "";
+            Cursor cursor = (Cursor) mSubject.getSelectedItem();
+            if (cursor != null) {
+                mSubjectText = cursor.getString(1);
+            }
+            loadSongList();
+        }
+
+        public void onNothingSelected(AdapterView<?> parent) {
+            mSubjectText = "";
+        }
+    }
+
+    public class VersionSelectedListener implements OnItemSelectedListener {
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+
+            Cursor cursor = dao.querySubjectList(pos);
+            SimpleCursorAdapter subjectAdapter = new SimpleCursorAdapter(getBaseContext(), android.R.layout.simple_spinner_item, cursor, new String[] { Songs.SUBJECT }, new int[] { android.R.id.text1 });
+            subjectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mSubject.setAdapter(subjectAdapter);
+
+        }
+
+        public void onNothingSelected(AdapterView<?> parent) {
+            //mSubjectText = "";
+        }
     }
 
     @Override
@@ -63,7 +106,7 @@ public class SongList extends Activity {
 
     private void loadSongList() {
 
-        Cursor cursor = dao.querySongsList(mSongversion.getSelectedItemPosition());
+        Cursor cursor = dao.querySongsList(mSongversion.getSelectedItemPosition(), mSubjectText);
 
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.song_item, cursor, new String[] { Songs.TITLE, Songs.SONGTEXT }, new int[] { R.id.title, R.id.songtext });
         mListView.setAdapter(adapter);
