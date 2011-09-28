@@ -153,10 +153,25 @@ public class Song extends Activity implements OnClickListener {
 
         switch (v.getId()) {
             case R.id.btn_goto:
+                
 
-                this.setTitle(this.getResources().getString(R.string.song_title) + " " + mSongid + "¿Â");
-                edt_songid.setText(mSongid + "");
-                loadContents();
+                Intent intent = new Intent();
+
+                intent.setClass(getBaseContext(), SongList.class);
+
+                //intent.putExtra("url", "http://bible.c3tv.com/hymn/hymn_text_new.asp?hymn_idx=");
+                //intent.putExtra("url", "http://bible.c3tv.com/hymn/hymn_player_new.asp?hymn_idx=");
+                intent.putExtra("version", mVersion);
+                intent.putExtra("mSongid", mSongid);
+
+                startActivity(intent);
+
+                //this.setTitle(this.getResources().getString(R.string.song_title) + " " + mSongid + "¿Â");
+                //edt_songid.setText(mSongid + "");
+                //loadContents();
+                
+                this.finish();
+                
                 break;
             case R.id.btn_prev:
 

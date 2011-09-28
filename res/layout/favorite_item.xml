@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/biblecontents" android:layout_width="fill_parent"
+	android:layout_height="fill_parent" android:orientation="horizontal">
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:orientation="vertical">
+		<LinearLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:orientation="horizontal">
+			<LinearLayout android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:orientation="vertical">
+				<TextView android:id="@+id/groupname" android:layout_width="wrap_content"
+					android:textColor="@color/versestr_color" android:layout_height="wrap_content"
+					android:textStyle="italic" />
+			</LinearLayout>
+			<TextView android:id="@+id/versestr" android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:paddingLeft="5dip"
+				android:paddingRight="5dip" />
+		</LinearLayout>
+		<LinearLayout android:id="@+id/comment_line"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:orientation="horizontal" >
+			<TextView android:id="@+id/contents" android:layout_width="wrap_content"
+				android:textSize="14sp" android:textColor="@color/comment_color"
+				android:layout_height="wrap_content" />
+		</LinearLayout>
+	</LinearLayout>
+</RelativeLayout>

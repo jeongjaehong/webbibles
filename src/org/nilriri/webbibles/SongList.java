@@ -206,6 +206,8 @@ public class SongList extends Activity {
                 intent.putExtra("version", c.getInt(Songs.COL_VERSION));
                 intent.putExtra("mSongid", c.getInt(Songs.COL_SONGID));
                 startActivity(intent);
+
+                finish();
             }
 
         }

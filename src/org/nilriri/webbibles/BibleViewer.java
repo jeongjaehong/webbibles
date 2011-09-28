@@ -1451,7 +1451,7 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
 
     private void openAddFavoritesDialog() {
 
-        Cursor c = favoritesDao.queryFavoritesGroup(0);
+        Cursor c = favoritesDao.queryFavNotExistsGroup(0);
 
         new AlertDialog.Builder(this).setTitle(R.string.select_favorites_group).setCursor(c, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialoginterface, int group) {

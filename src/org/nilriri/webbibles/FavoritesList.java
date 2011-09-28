@@ -28,7 +28,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 public class FavoritesList extends Activity implements OnClickListener {
-    private static final String TAG = "NotesList";
+    private static final String TAG = "FavoritesList";
 
     // Menu item ids
     public static final int MENU_ITEM_DELFAVORITE = Menu.FIRST;
@@ -40,6 +40,7 @@ public class FavoritesList extends Activity implements OnClickListener {
     private FavoritesDao dao;
 
     private ListView mListView = null;
+    private Spinner mSpin_groups = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,15 +56,9 @@ public class FavoritesList extends Activity implements OnClickListener {
         mListView.setOnCreateContextMenuListener(this);
         mListView.setOnItemClickListener(new listOnItemClickListener());
 
-        Spinner spin_groups = (Spinner) findViewById(R.id.groups);
-        spin_groups.setOnItemSelectedListener(new groupSelectedListener());
+        mSpin_groups = (Spinner) findViewById(R.id.groups);
+        mSpin_groups.setOnItemSelectedListener(new groupSelectedListener());
 
-        Cursor cursor = dao.queryFavoriteGroupList();
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, cursor, new String[] { FavoriteGroup.GROUPNM }, new int[] { android.R.id.text1 });
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spin_groups.setAdapter(adapter);
-
-        favoritesList(new Long(-1));
     }
 
     public class groupSelectedListener implements OnItemSelectedListener {
@@ -108,14 +103,20 @@ public class FavoritesList extends Activity implements OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
-        favoritesList(mListView.getSelectedItemId());
+
+        Cursor cursor = dao.queryFavoriteGroupList();
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, cursor, new String[] { FavoriteGroup.GROUPNM }, new int[] { android.R.id.text1 });
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpin_groups.setAdapter(adapter);
+
+        favoritesList(mSpin_groups.getSelectedItemId());
     }
 
-    private void favoritesList(Long group) {
+    private void favoritesList(Long groupID) {
 
-        Cursor cursor = dao.queryFavoritesList(group);
+        Cursor cursor = dao.queryFavoritesList(groupID);
 
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.chapter_item, cursor, new String[] { Favorites.GROUPNM, Favorites.CONTENTS }, new int[] { R.id.versestr, R.id.contents });
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.favorite_item, cursor, new String[] { Favorites.GROUPNM, Favorites.VERSESTR, Favorites.CONTENTS }, new int[] { R.id.groupname, R.id.versestr, R.id.contents });
         mListView.setAdapter(adapter);
     }
 
@@ -170,16 +171,29 @@ public class FavoritesList extends Activity implements OnClickListener {
 
     }
 
-    private void openAddFavoritesDialog(final Long id, final int oldGroup) {
+    private void openAddFavoritesDialog(final Long id, final Cursor c) {
 
-        final Cursor c = dao.queryFavoritesGroup(oldGroup);
+        final Cursor groupCur = dao.queryFavNotExistsGroup(c.getInt(Favorites.COL_GROUPKEY));
 
-        new AlertDialog.Builder(this).setTitle(R.string.select_favorites_group).setCursor(c, new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(this).setTitle(R.string.select_favorites_group).setCursor(groupCur, new DialogInterface.OnClickListener() {
             private Long mFavoritesID = id;
 
             public void onClick(DialogInterface dialoginterface, int group) {
 
-                dao.changeFavoriteGroup(mFavoritesID, c.getInt(FavoriteGroup.COL_ID));
+                if (groupCur.getInt(FavoriteGroup.COL_ID) <= 0) {
+                    Intent intent = new Intent();
+                    intent.setClass(getBaseContext(), GroupEditor.class);
+                    intent.putExtra("group", c.getLong(Favorites.COL_GROUPKEY));
+                    intent.putExtra("versestr", c.getString(Favorites.COL_VERSESTR));
+                    intent.putExtra("contents", c.getString(Favorites.COL_CONTENTS));
+                    intent.putExtra("version", c.getLong(Favorites.COL_VERSION));
+                    intent.putExtra("book", c.getLong(Favorites.COL_BOOK));
+                    intent.putExtra("chapter", c.getLong(Favorites.COL_CHAPTER));
+                    intent.putExtra("verse", c.getLong(Favorites.COL_VERSE));
+                    startActivity(intent);
+                } else {
+                    dao.changeFavoriteGroup(mFavoritesID, groupCur.getInt(FavoriteGroup.COL_ID));
+                }
 
                 // 전체그룹을 다시 조회한다.
                 favoritesList(new Long(-1));
@@ -215,21 +229,28 @@ public class FavoritesList extends Activity implements OnClickListener {
 
                 //Toast.makeText(this, "" + info.id + "," + c.getInt(Favorites.COL_GROUPKEY), Toast.LENGTH_SHORT).show();
 
-                openAddFavoritesDialog(info.id, c.getInt(Favorites.COL_GROUPKEY));
+                openAddFavoritesDialog(info.id, c);
 
                 return true;
             }
             case MENU_ITEM_DELETEGROUP: {
                 Log.e(TAG, "MENU_ITEM_DELFAVORITE id = " + info.id);
+                Log.e(TAG, "MENU_ITEM_DELFAVORITE position = " + info.position);
+                Log.e(TAG, "MENU_ITEM_DELFAVORITE getItemId = " + item.getItemId());
 
-                Cursor c = (Cursor) mListView.getItemAtPosition(info.position);
+                Cursor cursor = (Cursor) this.mListView.getItemAtPosition(info.position);
 
-                int delkey = c.getInt(Favorites.COL_GROUPKEY);
-
-                if (delkey == 0) {
+                if (cursor.getInt(Favorites.COL_GROUPKEY) == 0) {
                     Toast.makeText(this, "기본그룹은 삭제할 수 없습니다.", Toast.LENGTH_SHORT).show();
                 } else {
-                    dao.deleteFavoritesGroup(delkey);
+                    dao.deleteFavoritesGroup(cursor.getInt(Favorites.COL_GROUPKEY));
+
+                    cursor = dao.queryFavoriteGroupList();
+                    SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, cursor, new String[] { FavoriteGroup.GROUPNM }, new int[] { android.R.id.text1 });
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    mSpin_groups.setAdapter(adapter);
+
+                    favoritesList(new Long(-1));
                 }
 
                 return true;
@@ -248,6 +269,7 @@ public class FavoritesList extends Activity implements OnClickListener {
         String msg = "";
         if (c.moveToNext()) {
             msg = c.getString(Favorites.COL_CONTENTS);
+            msg += "(" + c.getString(Favorites.COL_VERSESTR) + ")";
         }
         c.close();
 
@@ -272,21 +294,26 @@ public class FavoritesList extends Activity implements OnClickListener {
         public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
             Log.e(TAG, "onListItemClick position = " + pos);
             Log.e(TAG, "onListItemClick id = " + id);
-            /*
-                     Cursor c = (Cursor) parent.getItemAtPosition(pos);
 
-                     if (c != null) {
-                      
-                         Intent intent = new Intent();
-                         intent.setClass(getBaseContext(), BibleViewer.class);
-                         intent.putExtra("VERSION", c.getInt(Favorites.COL_VERSION));
-                         intent.putExtra("BOOK", c.getInt(Favorites.COL_BOOK));
-                         intent.putExtra("CHAPTER", c.getInt(Favorites.COL_CHAPTER));
-                         intent.putExtra("VERSE", c.getInt(Favorites.COL_VERSE));
-                         startActivity(intent);
-                        
-                     }
-            */
+            Cursor c = (Cursor) parent.getItemAtPosition(pos);
+
+            if (c != null) {
+                Intent intent = new Intent();
+                intent.setClass(getBaseContext(), BibleViewer.class);
+                intent.putExtra("VERSION", c.getInt(Favorites.COL_VERSION));
+                intent.putExtra("BOOK", c.getInt(Favorites.COL_BOOK));
+                intent.putExtra("CHAPTER", c.getInt(Favorites.COL_CHAPTER));
+                intent.putExtra("VERSE", c.getInt(Favorites.COL_VERSE));
+
+                Log.e(TAG, "VERSION = " + c.getInt(Favorites.COL_VERSION));
+                Log.e(TAG, "BOOK = " + c.getInt(Favorites.COL_BOOK));
+                Log.e(TAG, "CHAPTER = " + c.getInt(Favorites.COL_CHAPTER));
+                Log.e(TAG, "VERSE = " + c.getInt(Favorites.COL_VERSE));
+
+                startActivity(intent);
+
+            }
+
         }
 
     }

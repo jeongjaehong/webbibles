@@ -26,13 +26,13 @@
 			<EditText android:id="@+id/song_id" android:layout_width="50dip"
 				android:text="" android:layout_height="41dip" android:textSize="14sp"
 				android:textStyle="bold" android:keepScreenOn="false"
-				android:inputType="number" />
+				android:inputType="number" android:visibility="gone"/>
 
 
 
 			<Button android:id="@+id/btn_goto" style="?android:attr/buttonStyleSmall"
-				android:text="▷" android:adjustViewBounds="true"
-				android:layout_height="wrap_content" android:layout_width="50dip" />
+				android:text="Go..." android:adjustViewBounds="true"
+				android:layout_height="wrap_content" android:layout_width="80dip" />
 
 
 

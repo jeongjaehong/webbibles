@@ -59,7 +59,8 @@ public class FavoritesDao extends AbstractDao {
 
         query.append(" SELECT  ");
         query.append("  " + FavoriteGroup._ID);
-        query.append(" ," + FavoriteGroup.GROUPNM);
+        //query.append(" ," + FavoriteGroup.GROUPNM);
+        query.append(" ,ifnull(" + FavoriteGroup.GROUPNM + ", '--No Title--') " + FavoriteGroup.GROUPNM);
         query.append(" FROM " + FavoriteGroup.FAVORITEGROUP_TABLE_NAME + " ");
         query.append(" WHERE " + FavoriteGroup._ID + " = " + mID.toString());
 
@@ -80,7 +81,8 @@ public class FavoritesDao extends AbstractDao {
 
         query.append(" SELECT  ");
         query.append("  " + FavoriteGroup._ID);
-        query.append(" ," + FavoriteGroup.GROUPNM);
+        query.append(" ,ifnull(" + FavoriteGroup.GROUPNM + ", '--No Title--') " + FavoriteGroup.GROUPNM);
+        //query.append(" ," + FavoriteGroup.GROUPNM);
         query.append(" FROM " + FavoriteGroup.FAVORITEGROUP_TABLE_NAME + " ");
 
         query.append(" ORDER BY " + FavoriteGroup.GROUPNM + " ASC ");
@@ -89,19 +91,17 @@ public class FavoritesDao extends AbstractDao {
 
     }
 
-    public Cursor queryFavoritesGroup(int oldGroup) {
+    public Cursor queryFavNotExistsGroup(int oldGroup) {
 
         StringBuffer query = new StringBuffer();
 
-        if (oldGroup <= 0) {
-            query.append(" SELECT  ");
-            query.append("  0 " + FavoriteGroup._ID);
-            query.append(" ,' Create New Group...' " + FavoriteGroup.GROUPNM);
-            query.append(" union all  ");
-        }
+        query.append(" SELECT  ");
+        query.append("  0 " + FavoriteGroup._ID);
+        query.append(" ,' Create New Group...' " + FavoriteGroup.GROUPNM);
+        query.append(" union all  ");
         query.append(" SELECT  ");
         query.append("  " + FavoriteGroup._ID);
-        query.append(" ," + FavoriteGroup.GROUPNM);
+        query.append(" ,ifnull(" + FavoriteGroup.GROUPNM + ", '--No Title--') " + FavoriteGroup.GROUPNM);
         query.append(" FROM " + FavoriteGroup.FAVORITEGROUP_TABLE_NAME + " ");
         if (oldGroup > 0) {
             query.append(" WHERE " + FavoriteGroup._ID + " <> " + oldGroup);
@@ -116,25 +116,31 @@ public class FavoritesDao extends AbstractDao {
 
         StringBuffer query = new StringBuffer();
 
+        //int groupkey = -1;
+
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
+        try {
 
-        //기존 그룹의 자료를 다른자료로 변경한다.
-        query.append(" UPDATE " + Favorites.FAVORITES_TABLE_NAME + " ");
-        query.append(" SET " + Favorites.GROUPKEY + " = 0 ");
-        query.append(" WHERE " + Favorites.GROUPKEY + " = " + oldGroup);
+            //기존 그룹의 자료를 다른자료로 변경한다.
+            query.append(" UPDATE " + Favorites.FAVORITES_TABLE_NAME + " ");
+            query.append(" SET " + Favorites.GROUPKEY + " = IFNULL((SELECT MIN(" + FavoriteGroup._ID + ") FROM " + FavoriteGroup.FAVORITEGROUP_TABLE_NAME + " ),-1) ");
+            query.append(" WHERE " + Favorites.GROUPKEY + " = " + oldGroup);
 
-        db.execSQL(query.toString());
+            db.execSQL(query.toString());
 
-        //그룹코드를 삭제한다.
-        query.append(" DELETE FROM " + FavoriteGroup.FAVORITEGROUP_TABLE_NAME + " ");
-        query.append(" WHERE " + FavoriteGroup._ID + " = " + oldGroup);
+            //그룹코드를 삭제한다.
+            query = new StringBuffer();
+            query.append(" DELETE FROM " + FavoriteGroup.FAVORITEGROUP_TABLE_NAME + " ");
+            query.append(" WHERE " + FavoriteGroup._ID + " = " + oldGroup);
 
-        db.execSQL(query.toString());
+            db.execSQL(query.toString());
 
-        db.setTransactionSuccessful();
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (Exception e) {
 
-        db.endTransaction();
+        }
 
         db.close();
 
@@ -169,7 +175,7 @@ public class FavoritesDao extends AbstractDao {
 
     }
 
-    public Cursor queryFavoritesList(Long group) {
+    public Cursor queryFavoritesList(Long groupID) {
 
         StringBuffer query = new StringBuffer();
 
@@ -177,17 +183,18 @@ public class FavoritesDao extends AbstractDao {
         query.append("  f." + Favorites._ID);
         query.append(" ,f." + Favorites.BIBLEID);
         query.append(" ,f." + Favorites.GROUPKEY);
-        query.append(" ,'' " + Favorites.GROUPNM);
         query.append(" ,f." + Favorites.VERSESTR);
         query.append(" ,f." + Favorites.VERSION);
         query.append(" ,f." + Favorites.BOOK);
         query.append(" ,f." + Favorites.CHAPTER);
         query.append(" ,f." + Favorites.VERSE);
-        query.append(" ,'[' || (select g." + FavoriteGroup.GROUPNM + " from " + FavoriteGroup.FAVORITEGROUP_TABLE_NAME + " g where g." + FavoriteGroup._ID + " = f." + Favorites.GROUPKEY + ") ");
-        query.append(" || ',' || f." + Favorites.VERSESTR + "||'] ' || f." + Favorites.CONTENTS + " " + Favorites.CONTENTS);
+        //query.append(" ,'[' || ifnull((select g." + FavoriteGroup.GROUPNM + " from " + FavoriteGroup.FAVORITEGROUP_TABLE_NAME + " g where g." + FavoriteGroup._ID + " = f." + Favorites.GROUPKEY + "),'Group미정') ");
+        query.append(" ,f." + Favorites.CONTENTS + " " + Favorites.CONTENTS);
+        query.append(" ,'[' || ifnull((select g." + FavoriteGroup.GROUPNM + " from " + FavoriteGroup.FAVORITEGROUP_TABLE_NAME + " g where g." + FavoriteGroup._ID + " = f." + Favorites.GROUPKEY + "),'Group미정') ");
+        query.append(" || '] ' " + Favorites.GROUPNM);
         query.append(" FROM " + Favorites.FAVORITES_TABLE_NAME + " f ");
-        if (group > 0) {
-            query.append(" WHERE " + Favorites.GROUPKEY + " = " + group);
+        if (groupID > 0) {
+            query.append(" WHERE " + Favorites.GROUPKEY + " = " + groupID);
         }
 
         query.append(" ORDER BY f." + Favorites._ID + " ASC ");
