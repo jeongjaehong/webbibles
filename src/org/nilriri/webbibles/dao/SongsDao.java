@@ -120,7 +120,7 @@ public class SongsDao extends AbstractDao {
         query.append(" FROM " + Songs.SONGS_TABLE_NAME + " ");
         query.append(" WHERE " + Songs.VERSION + " = " + version);
         if (!"".equals(subject)) {
-            query.append(" AND " + Songs.SUBJECT + " = '" + subject + "'");
+            query.append(" AND " + Songs.SUBJECT + " like '%" + subject + "%'");
         }
         query.append(" GROUP BY " + Songs.VERSION + ", " + Songs.SONGID + " ");
         query.append(" ORDER BY " + Songs.VERSION + "," + Songs.SONGID + "  ");
