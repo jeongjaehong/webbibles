@@ -87,7 +87,7 @@ public class SongsDao extends AbstractDao {
 
         StringBuffer query = new StringBuffer();
 
-        query.append(" SELECT 0 _id, '' subject ");
+        query.append(" SELECT 0 _id, ' ' subject ");
         query.append(" UNION ALL ");
         query.append(" SELECT ");
         query.append(" MIN(" + Songs._ID + ") _id ");
@@ -95,8 +95,7 @@ public class SongsDao extends AbstractDao {
         query.append(" FROM " + Songs.SONGS_TABLE_NAME + " ");
         query.append(" WHERE " + Songs.VERSION + " = " + version);
         query.append(" GROUP BY " + Songs.SUBJECT + "  ");
-
-        query.append(" ORDER BY 1 ");
+        query.append(" ORDER BY 2 ");
 
         Cursor cursor = db.rawQuery(query.toString(), null);
 
@@ -120,7 +119,7 @@ public class SongsDao extends AbstractDao {
         query.append(" FROM " + Songs.SONGS_TABLE_NAME + " ");
         query.append(" WHERE " + Songs.VERSION + " = " + version);
         if (!"".equals(subject)) {
-            query.append(" AND " + Songs.SUBJECT + " like '%" + subject + "%'");
+            query.append(" AND " + Songs.SUBJECT + " like '%" + subject.trim() + "%'");
         }
         query.append(" GROUP BY " + Songs.VERSION + ", " + Songs.SONGID + " ");
         query.append(" ORDER BY " + Songs.VERSION + "," + Songs.SONGID + "  ");
