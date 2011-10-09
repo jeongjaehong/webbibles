@@ -284,6 +284,11 @@ public class Song extends Activity implements OnClickListener {
             ResponseHandler<String> responseHandler = new BasicResponseHandler();
 
             try {
+            	
+            	httpget.setHeader("target", "hymn_pop");
+            	httpget.setHeader("window", "hymn_pop");
+            	httpget.setHeader("window.name", "hymn_pop");
+            	httpget.setHeader("name", "hymn_pop");
 
                 String HTMLSource = Client.execute(httpget, responseHandler);
 

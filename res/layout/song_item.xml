@@ -11,8 +11,8 @@
 
 	<TextView android:id="@+id/songtext" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:layout_below="@id/title"
-		android:ellipsize="end"
-		android:textSize="10sp" />
+		android:ellipsize="end" android:textColor="@color/comment_color"
+		android:textSize="11sp" />
 
 </RelativeLayout>
 

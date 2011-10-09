@@ -7,10 +7,10 @@ import android.provider.BaseColumns;
  */
 public final class Constants {
     public static final String DATABASE_NAME = "bibles.sqlite";
-    public static final int DATABASE_VERSION = 14;
+    public static final int DATABASE_VERSION = 18;
 
     public static final String EXTERNAL_DB_NAME = "/sdcard/bibles.sqlite";
-    public static final int EXTERNAL_DB_VERSION = 14;
+    public static final int EXTERNAL_DB_VERSION = 18;
 
     public static final int DATAMANAGE_BACKUP = 0;
     public static final int DATAMANAGE_RESTORE = 1;
