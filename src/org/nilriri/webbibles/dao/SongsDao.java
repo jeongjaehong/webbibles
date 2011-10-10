@@ -116,9 +116,13 @@ public class SongsDao extends AbstractDao {
 		query.append(" ,ifnull(S." + Songs.SONGID + ", v." + Songs.SONGID + ") " + Songs.SONGID);
 		query.append(" ,MAX(substr(replace(S." + Songs.SONGTEXT + ", '\n', ' '), 1, 30)) " + Songs.SONGTEXT);
 		query.append(" ,MAX(replace(S." + Songs.SUBJECT + ",'[林力]','')) " + Songs.SUBJECT);
-		query.append(" ,ifnull(MAX(replace(S." + Songs.TITLE + ",'[力格]','')), 'Download...') " + Songs.TITLE);
+		query.append(" ,ifnull(MAX(replace(S." + Songs.TITLE + ",'[力格]','')), v.SONGID || ' 厘 Download...') " + Songs.TITLE);
 		query.append(" FROM V_TEMP V ");
-		query.append("     LEFT JOIN " + Songs.SONGS_TABLE_NAME + " S ");
+		if ("".equals(subject)) {
+			query.append("     LEFT JOIN " + Songs.SONGS_TABLE_NAME + " S ");
+		} else {
+			query.append("     INNER JOIN " + Songs.SONGS_TABLE_NAME + " S ");
+		}
 		query.append("     ON V.SONGID = S.SONGID ");
 		query.append(" AND S." + Songs.VERSION + " = " + version);
 		if (!"".equals(subject)) {
