@@ -188,9 +188,9 @@ public class FavoritesDao extends AbstractDao {
         query.append(" ,f." + Favorites.BOOK);
         query.append(" ,f." + Favorites.CHAPTER);
         query.append(" ,f." + Favorites.VERSE);
-        //query.append(" ,'[' || ifnull((select g." + FavoriteGroup.GROUPNM + " from " + FavoriteGroup.FAVORITEGROUP_TABLE_NAME + " g where g." + FavoriteGroup._ID + " = f." + Favorites.GROUPKEY + "),'Group미정') ");
+        //query.append(" ,'[' || ifnull((select g." + FavoriteGroup.GROUPNM + " from " + FavoriteGroup.FAVORITEGROUP_TABLE_NAME + " g where g." + FavoriteGroup._ID + " = f." + Favorites.GROUPKEY + "),'미지정') ");
         query.append(" ,f." + Favorites.CONTENTS + " " + Favorites.CONTENTS);
-        query.append(" ,'[' || ifnull((select g." + FavoriteGroup.GROUPNM + " from " + FavoriteGroup.FAVORITEGROUP_TABLE_NAME + " g where g." + FavoriteGroup._ID + " = f." + Favorites.GROUPKEY + "),'Group미정') ");
+        query.append(" ,'[' || ifnull((select g." + FavoriteGroup.GROUPNM + " from " + FavoriteGroup.FAVORITEGROUP_TABLE_NAME + " g where g." + FavoriteGroup._ID + " = f." + Favorites.GROUPKEY + "),'미지정') ");
         query.append(" || '] ' " + Favorites.GROUPNM);
         query.append(" FROM " + Favorites.FAVORITES_TABLE_NAME + " f ");
         if (groupID > 0) {
