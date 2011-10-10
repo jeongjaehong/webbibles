@@ -49,6 +49,6 @@
 
 
 	<CheckBoxPreference android:key="calendar"
-		android:title="Calendar 사용" android:defaultValue="true"
+		android:title="Calendar 사용" android:defaultValue="false"
 		android:summary="Calendar를 이용하여 맥체인성경읽기 표를 사용하시려면 선택하십시오." />
 </PreferenceScreen>

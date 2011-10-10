@@ -36,7 +36,7 @@ public class Prefs extends PreferenceActivity {
     private static final boolean OPT_THEME_DEF = false;
 
     private static final String OPT_CALENDAR = "calendar";
-    private static final boolean OPT_CALENDAR_DEF = true;
+    private static final boolean OPT_CALENDAR_DEF = false;
 
     private static final String OPT_BACKGROUND_COLOR = "backgroundcolor";
 
