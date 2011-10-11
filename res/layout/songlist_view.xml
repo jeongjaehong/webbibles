@@ -16,11 +16,12 @@
 		<Spinner android:id="@+id/subject" style="?android:attr/buttonStyleSmall"
 			android:layout_width="140dip" android:layout_toRightOf="@id/songversion"
 			android:layout_height="wrap_content" />
-		<EditText android:id="@+id/song_id" android:layout_width="40dip"
+		<EditText android:layout_width="40dip"
 			android:maxLength="3" android:gravity="right" android:text="1"
 			android:layout_height="41dip" android:textSize="12sp"
 			android:keepScreenOn="false" android:inputType="number"
-			android:layout_toRightOf="@id/subject" />
+			android:layout_toRightOf="@id/subject" android:id="@+id/song_id">
+		</EditText>
 		<Button android:id="@+id/btn_goto" style="?android:attr/buttonStyleSmall"
 			android:text="Go" android:adjustViewBounds="true"
 			android:layout_height="wrap_content" android:layout_width="50dip"

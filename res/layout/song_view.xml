@@ -31,7 +31,7 @@
 
 
 			<Button android:id="@+id/btn_goto" style="?android:attr/buttonStyleSmall"
-				android:text="Go..." android:adjustViewBounds="true"
+				android:text="@string/btn_go" android:adjustViewBounds="true"
 				android:layout_height="wrap_content" android:layout_width="80dip" />
 
 

@@ -71,6 +71,7 @@
 	<string name="btn_manage">관리</string>
 	<string name="btn_search">검색</string>
 	<string name="btn_prev">이전</string>
+	<string name="btn_go">Go...</string>	
 	<string name="btn_next">다음</string>
 	<string name="btn_start">시작</string>
 	<string name="btn_allcheck">전체</string>
