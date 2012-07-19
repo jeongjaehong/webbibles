@@ -3,6 +3,7 @@ package org.nilriri.webbibles.dao;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import org.nilriri.webbibles.R;
 import org.nilriri.webbibles.com.Common;
 import org.nilriri.webbibles.com.Prefs;
 import org.nilriri.webbibles.dao.Constants.Bibles;
@@ -19,11 +20,13 @@ import android.widget.ListView;
 public class BibleDao extends AbstractDao {
 
     private Context mContext;
+    private String[] mBibleShortName;
 
     public BibleDao(Context context, CursorFactory factory, boolean sdcarduse) {
 
         super(context, factory, sdcarduse);
         mContext = context;
+        mBibleShortName = mContext.getResources().getStringArray(R.array.short_biblenames);
     }
 
     public void delete(int mVersion, Long id) {
@@ -61,7 +64,7 @@ public class BibleDao extends AbstractDao {
     }
 
     public void updateStyle(int mVersion, Long id, int style) {
-        String sql = "UPDATE " + Bibles.VERSION_TABLE_NAME[mVersion] + " SET style = case when style = 0 then 1 else 0 end WHERE _id = " + id;
+        String sql = "UPDATE " + Bibles.VERSION_TABLE_NAME[mVersion] + " SET style = case when style = 1 then 0 else 1 end WHERE _id = " + id;
         getWritableDatabase().execSQL(sql);
     }
 
@@ -105,6 +108,10 @@ public class BibleDao extends AbstractDao {
 
         db.execSQL("DELETE FROM " + Bibles.VERSION_TABLE_NAME[mVersion] + " WHERE BOOK=" + mBook + " AND CHAPTER=" + mChapter + " ");
 
+        long newBibleID = 0;
+        int oldVerse = 0;
+        int iVerse = 0;
+
         for (int row = 0; row < limit; row++) {
             val = new ContentValues();
             val.put("vercode", versioncode);
@@ -125,13 +132,29 @@ public class BibleDao extends AbstractDao {
 
             } else {
                 HashMap<String, String> map = (HashMap<String, String>) obj;
+
+                if (((String) map.get("Number")).equals("LC")) {
+                    insertLineComment(newBibleID, versioncode, versionname, mVersion, mBook, mChapter, oldVerse, map);
+                    continue;
+                }
+
+                try {
+                    iVerse = Integer.parseInt((String) map.get("Number"));
+                    if (iVerse > 0)
+                        oldVerse = iVerse;
+                } catch (Exception e) {
+
+                }
+
                 val.put("verse", map.get("Number"));
                 val.put("contents", map.get("Contents"));
             }
 
             //Log.d("InternalDao-insert", "val=" + val.toString());
 
-            db.insert(Bibles.VERSION_TABLE_NAME[mVersion], null, val);
+            newBibleID = db.insert(Bibles.VERSION_TABLE_NAME[mVersion], null, val);
+            
+            Log.d("InternalDao-insert", "ret=" + newBibleID );
         }
 
         db.setTransactionSuccessful();
@@ -140,6 +163,31 @@ public class BibleDao extends AbstractDao {
 
         //String msg = getContext().getResources().getString(R.string.save_successful);
         //Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+
+    }
+
+    public void insertLineComment(long bibleid, String versioncode, String versionname, int mVersion, int mBook, int mChapter, int iVerse, HashMap<String, String> map) {
+
+        ContentValues values = new ContentValues();
+
+        String modified_date = Common.fmtDate(Calendar.getInstance());
+        //DateFormat.getDateInstance(DateFormat.FULL, Locale.KOREA).format(System.currentTimeMillis());
+
+        values.put(Notes.BIBLEID, bibleid);
+        values.put(Notes.VERSION, versioncode);
+        values.put(Notes.BOOK, mBook);
+        values.put(Notes.CHAPTER, mChapter);
+        values.put(Notes.VERSE, (iVerse + 1));
+        values.put(Notes.VERSESTR, mBibleShortName[mBook] + " " + (mChapter + 1) + ":" + (iVerse + 1));
+        values.put(Notes.MODIFIED_DATE, modified_date);
+        values.put(Notes.SCORE, -1);
+        values.put(Notes.TITLE, "°üÁÖ:" + mBibleShortName[mBook] + " " + (mChapter + 1) + ":" + (iVerse + 1));
+        values.put(Notes.CONTENTS, (String) map.get("Contents"));
+        values.remove(Notes._ID);
+
+        Log.d("InternalDao-insert", "insert values = " + values.toString());
+
+        db.insert(Notes.NOTE_TABLE_NAME, null, values);
 
     }
 

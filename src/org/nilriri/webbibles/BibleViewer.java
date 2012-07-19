@@ -664,15 +664,17 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
             HTMLSource = HTMLSource.replace("<BR>", "\n");
             HTMLSource = HTMLSource.replace("&nbsp;&nbsp;&nbsp;", "##");
             Log.d(TAG, "RegExpr Result22 = " + HTMLSource);
-            /* while (HTMLSource.indexOf("<div") >= 0 && HTMLSource.indexOf(">", HTMLSource.indexOf("<div")) >= 0) {
+            
+            /* 주석을 괄로호 묶어서 표시 */
+            while (HTMLSource.indexOf("<div") >= 0 && HTMLSource.indexOf(">", HTMLSource.indexOf("<div")) >= 0) {
 
                  String target = HTMLSource.substring(HTMLSource.indexOf("<div"), HTMLSource.indexOf(">", HTMLSource.indexOf("<div")) + 1);
-                 HTMLSource = HTMLSource.replace(target, "( ");
+                 HTMLSource = HTMLSource.replace(target, "\nLC##( ");
 
              }
              HTMLSource = HTMLSource.replace("</div>", " )");
              
-            */
+            
             Matcher matcher = Pattern.compile("<(\"[^\"]*\"|'[^']*'|[^'\">])*>").matcher("");
 
             StringBuffer result = new StringBuffer();
@@ -724,6 +726,7 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
 
             if (Prefs.getAutoSave(BibleViewer.this)) {
                 dao.insert(mVersions[mVersion], mKVersions[mVersion], mVersion, mBook, mChapter, mListView);
+                loadDBContents();
             }
 
             mCompletecount++;

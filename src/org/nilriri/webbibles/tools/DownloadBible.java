@@ -263,6 +263,16 @@ public class DownloadBible extends Activity implements OnClickListener {
         HTMLSource = HTMLSource.replace("<br>", "\n");
         HTMLSource = HTMLSource.replace("<BR>", "\n");
         HTMLSource = HTMLSource.replace("&nbsp;&nbsp;&nbsp;", "##");
+
+        /* 주석을 괄로호 묶어서 표시 */
+        while (HTMLSource.indexOf("<div") >= 0 && HTMLSource.indexOf(">", HTMLSource.indexOf("<div")) >= 0) {
+
+            String target = HTMLSource.substring(HTMLSource.indexOf("<div"), HTMLSource.indexOf(">", HTMLSource.indexOf("<div")) + 1);
+            HTMLSource = HTMLSource.replace(target, "\nLC##( ");
+
+        }
+        HTMLSource = HTMLSource.replace("</div>", " )");
+
         Log.d(TAG, "RegExpr Result22 = " + HTMLSource);
         Matcher matcher = Pattern.compile("<(\"[^\"]*\"|'[^']*'|[^'\">])*>").matcher("");
 
