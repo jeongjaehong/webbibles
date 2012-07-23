@@ -407,7 +407,7 @@ public class Song extends Activity implements OnClickListener {
 
                 //set the download URL, a url that points to a file on the internet
                 //this is the file to be downloaded
-                URL url = new URL("http://m.holybible.or.kr/" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/HYMN_SCR/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
+                URL url = new URL("http://www.holybible.or.kr/" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/HYMN_SCR/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
 
                 //create the new connection
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -617,7 +617,7 @@ public class Song extends Activity implements OnClickListener {
 
                                 //set the download URL, a url that points to a file on the internet
                                 //this is the file to be downloaded
-                                URL url = new URL("http://m.holybible.or.kr/" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/HYMN_SCR/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
+                                URL url = new URL("http://www.holybible.or.kr/" + (mVersion == 0 ? "NHYMN" : "HYMN") + "/HYMN_SCR/" + imageid + "" + (mVersion == 0 ? ".gif" : ".jpg") + "");
 
                                 //create the new connection
                                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
