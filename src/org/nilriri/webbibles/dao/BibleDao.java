@@ -107,6 +107,7 @@ public class BibleDao extends AbstractDao {
         db.beginTransaction();
 
         db.execSQL("DELETE FROM " + Bibles.VERSION_TABLE_NAME[mVersion] + " WHERE BOOK=" + mBook + " AND CHAPTER=" + mChapter + " ");
+        db.execSQL("DELETE FROM " + Notes.NOTE_TABLE_NAME + " WHERE VERSION = '" + Bibles.VERSION_TABLE_NAME[mVersion] + "' AND BOOK=" + mBook + " AND CHAPTER=" + mChapter + " AND SCORE < 0 AND TITLE LIKE '包林%' ");
 
         long newBibleID = 0;
         int oldVerse = 0;
@@ -122,39 +123,37 @@ public class BibleDao extends AbstractDao {
 
             Object obj = contents.getItemAtPosition(row);
 
-            //Log.d("InternalDao-insert", "class type = " + obj.getClass().toString());
-
             if (obj.getClass().toString().indexOf("SQLiteCursor") >= 0) {
 
                 Cursor c = (Cursor) obj;
                 val.put("verse", c.getInt(6) == 0 ? null : c.getInt(6));
                 val.put("contents", c.getString(7));
 
+                newBibleID = db.insert(Bibles.VERSION_TABLE_NAME[mVersion], null, val);
             } else {
                 HashMap<String, String> map = (HashMap<String, String>) obj;
 
                 if (((String) map.get("Number")).equals("LC")) {
                     insertLineComment(newBibleID, versioncode, versionname, mVersion, mBook, mChapter, oldVerse, map);
-                    continue;
+                } else {
+                    try {
+                        //Log.d("InternalDao-insert", "iVerse = " + iVerse + "," + (String) map.get("Number"));
+
+                        iVerse = Integer.parseInt(((String) map.get("Number")).trim());
+                        //Log.d("InternalDao-insert", "iVerse = " + iVerse + "," + (String) map.get("Number"));
+                        if (iVerse > 0)
+                            oldVerse = iVerse;
+                    } catch (Exception e) {
+                        //Log.d("InternalDao-insert", "iVerse = " + e.getMessage() );
+
+                    }
+
+                    val.put("verse", map.get("Number"));
+                    val.put("contents", map.get("Contents"));
+                    newBibleID = db.insert(Bibles.VERSION_TABLE_NAME[mVersion], null, val);
+                    //Log.d("InternalDao-insert", "db insert = " + val.toString() );
                 }
-
-                try {
-                    iVerse = Integer.parseInt((String) map.get("Number"));
-                    if (iVerse > 0)
-                        oldVerse = iVerse;
-                } catch (Exception e) {
-
-                }
-
-                val.put("verse", map.get("Number"));
-                val.put("contents", map.get("Contents"));
             }
-
-            //Log.d("InternalDao-insert", "val=" + val.toString());
-
-            newBibleID = db.insert(Bibles.VERSION_TABLE_NAME[mVersion], null, val);
-            
-            Log.d("InternalDao-insert", "ret=" + newBibleID );
         }
 
         db.setTransactionSuccessful();
@@ -177,11 +176,11 @@ public class BibleDao extends AbstractDao {
         values.put(Notes.VERSION, versioncode);
         values.put(Notes.BOOK, mBook);
         values.put(Notes.CHAPTER, mChapter);
-        values.put(Notes.VERSE, (iVerse + 1));
-        values.put(Notes.VERSESTR, mBibleShortName[mBook] + " " + (mChapter + 1) + ":" + (iVerse + 1));
+        values.put(Notes.VERSE, iVerse);
+        values.put(Notes.VERSESTR, mBibleShortName[mBook] + " " + (mChapter + 1) + ":" + iVerse);
         values.put(Notes.MODIFIED_DATE, modified_date);
         values.put(Notes.SCORE, -1);
-        values.put(Notes.TITLE, "包林:" + mBibleShortName[mBook] + " " + (mChapter + 1) + ":" + (iVerse + 1));
+        values.put(Notes.TITLE, "包林");
         values.put(Notes.CONTENTS, (String) map.get("Contents"));
         values.remove(Notes._ID);
 
@@ -458,6 +457,7 @@ public class BibleDao extends AbstractDao {
 
         StringBuffer query = new StringBuffer();
 
+        /*
         query.append("SELECT  ");
         query.append("  a._id, a.vercode, a.vername, a.version, a.book, a.chapter, (case when a.verse > 0 then a.verse else null end) verse  ");
         query.append("  , a.contents as contents ");
@@ -472,14 +472,48 @@ public class BibleDao extends AbstractDao {
         query.append("WHERE a." + Bibles.VERSION + " = ? ");
         query.append("AND a." + Bibles.BOOK + " = ? ");
         query.append("AND a." + Bibles.CHAPTER + " = ? ");
+        */
 
-        query.append(" ORDER BY 1 ");
+        query.append("SELECT _id, vercode, vername, version, book, chapter, verse, contents, note, comment, style, noteid FROM ( ");
+        query.append(" SELECT  ");
+        query.append("  a._id, a.vercode, a.vername, a.version, a.book, a.chapter, (case when a.verse > 0 then a.verse else null end) verse  ");
+        query.append("  , a.contents as contents ");
+        query.append("  , (select count(*) from biblenote n where ifnull(n.score,0) >= 0 and n.book = a.book and n.chapter = a.chapter and n.verse = cast(a.verse as integer)) as note ");
+        query.append("  , '' as comment ");
+        query.append("  , a.style as style ");
+        query.append("  , -1 as noteid ");
+        query.append(" FROM " + Bibles.VERSION_TABLE_NAME[mVersion] + " a ");
+        query.append(" WHERE a." + Bibles.VERSION + " = " + mVersion);
+        query.append("   AND a." + Bibles.BOOK + " = " + mBook);
+        query.append("   AND a." + Bibles.CHAPTER + " = " + mChapter);
 
-        String selectionArgs[] = new String[] { mVersion + "", mBook + "", mChapter + "" };
+        query.append(" UNION ALL ");
 
+        query.append(" SELECT  ");
+        query.append("  n." + Notes.BIBLEID + " as _id, '' vercode, '' vername, 0 version, 0 book, 0 chapter, 0 verse  ");
+        query.append("  , '' as contents ");
+        query.append("  , 0 as note ");
+        query.append("  , ifnull(n.contents,'') as comment ");
+        query.append("  , 0 as style ");
+        query.append("  , n._id as noteid ");
+        query.append(" FROM " + Notes.NOTE_TABLE_NAME + " n ");
+        //query.append(" WHERE n." + Notes.VERSION + " = '" + Bibles.VERSION_TABLE_NAME[mVersion] + "'");
+        query.append(" WHERE 1 = 1 ");
+        query.append("   AND n." + Notes.BOOK + " = " + mBook);
+        query.append("   AND n." + Notes.CHAPTER + " = " + mChapter);
+        query.append("   AND n." + Notes.SCORE + " < 0 ");
+
+        query.append(") x ");
+
+        //query.append(" ORDER BY 1 ");
+        query.append(" ORDER BY 1, 12 ");
+
+        //String selectionArgs[] = new String[] { mVersion + "", mBook + "", mChapter + "" };
+
+        Log.d("InternalDao-queryExistsSchedule", "args=" + mVersion + "," + mBook + "," + mChapter);
         Log.d("InternalDao-queryExistsSchedule", "query=" + query.toString());
 
-        return getReadableDatabase().rawQuery(query.toString(), selectionArgs);
+        return getReadableDatabase().rawQuery(query.toString(), null);
 
     }
 

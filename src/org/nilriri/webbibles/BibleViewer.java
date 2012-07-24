@@ -664,17 +664,16 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
             HTMLSource = HTMLSource.replace("<BR>", "\n");
             HTMLSource = HTMLSource.replace("&nbsp;&nbsp;&nbsp;", "##");
             Log.d(TAG, "RegExpr Result22 = " + HTMLSource);
-            
+
             /* 주석을 괄로호 묶어서 표시 */
             while (HTMLSource.indexOf("<div") >= 0 && HTMLSource.indexOf(">", HTMLSource.indexOf("<div")) >= 0) {
 
-                 String target = HTMLSource.substring(HTMLSource.indexOf("<div"), HTMLSource.indexOf(">", HTMLSource.indexOf("<div")) + 1);
-                 HTMLSource = HTMLSource.replace(target, "\nLC##( ");
+                String target = HTMLSource.substring(HTMLSource.indexOf("<div"), HTMLSource.indexOf(">", HTMLSource.indexOf("<div")) + 1);
+                HTMLSource = HTMLSource.replace(target, "\nLC##( ");
 
-             }
-             HTMLSource = HTMLSource.replace("</div>", " )");
-             
-            
+            }
+            HTMLSource = HTMLSource.replace("</div>", " )");
+
             Matcher matcher = Pattern.compile("<(\"[^\"]*\"|'[^']*'|[^'\">])*>").matcher("");
 
             StringBuffer result = new StringBuffer();
@@ -1269,6 +1268,7 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
                 TextView contents = (TextView) v.findViewById(R.id.contents);
                 TextView comment = (TextView) v.findViewById(R.id.comment);
                 LinearLayout comment_line = (LinearLayout) v.findViewById(R.id.comment_line);
+                LinearLayout contents_line = (LinearLayout) v.findViewById(R.id.contents_line);
                 //TextView rowidcolon = (TextView) v.findViewById(R.id.rowidcolon);
                 ImageView flag = (ImageView) v.findViewById(R.id.flag);
                 ImageView note = (ImageView) v.findViewById(R.id.note);
@@ -1281,6 +1281,7 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
                 if (contents != null) {
 
                     int style = mCursor.getInt(mCursor.getColumnIndexOrThrow("style"));
+                    
                     if (style > 0) {
                         try {
 
@@ -1289,16 +1290,26 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
                             //str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 21, str.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                             SpannableString str = new SpannableString(mCursor.getString(7));
-                            
+
                             //str.setSpan(new BackgroundColorSpan(getResources().getColor(R.color.lightpen_color)), 0, str.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                             str.setSpan(new BackgroundColorSpan(Prefs.getPenColor(getBaseContext())), 0, str.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                            contents.setText(str);
+                            if (!"".equals(str)) {
+                                contents_line.setVisibility(View.VISIBLE);
+                                contents.setText(str);
+                            } else {
+                                contents_line.setVisibility(View.GONE);
+                            }
                         } catch (Exception e) {
 
                         }
                     } else {
-                        contents.setText(mCursor.getString(7));
+                        if (!"".equals(mCursor.getString(7))) {
+                            contents_line.setVisibility(View.VISIBLE);
+                            contents.setText(mCursor.getString(7));
+                        } else {
+                            contents_line.setVisibility(View.GONE);
+                        }
                     }
 
                     if ("".equals(versestr.getText())) {
