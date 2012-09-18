@@ -11,7 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-
+
         <RelativeLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"
@@ -44,26 +44,12 @@
                 android:layout_below="@id/app_icons"
                 android:gravity="left" />
 
-            <ImageView
-                android:id="@+id/app_caption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/blank_line0"
-                android:layout_centerHorizontal="true"
-                android:adjustViewBounds="true"
-                android:gravity="center"
-                android:maxHeight="50dip"
-                android:maxWidth="300dip"
-                android:scaleType="centerInside"
-                android:src="@drawable/title" />
-
             <!-- 버젼 -->
 
             <TextView
                 android:id="@+id/app_version"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/app_caption"
                 android:gravity="right"
                 android:text="@string/app_version"
                 android:textColor="@color/white_font"
@@ -83,6 +69,7 @@
 
             <LinearLayout
                 xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/linearLayout3"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
@@ -102,7 +89,7 @@
 
                 <LinearLayout
                     xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="fill_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="bottom|center_horizontal|clip_horizontal"
                     android:orientation="horizontal" >
@@ -168,96 +155,122 @@
             <LinearLayout
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/linearLayout2"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/linearLayout1"
-                android:layout_alignParentLeft="true"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal" >
 
-                <Button
-                    android:id="@+id/btn_song"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="75dip"
-                    android:layout_height="wrap_content"
-                    android:text="찬송" />
+                <LinearLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/linearLayout2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_above="@+id/linearLayout1"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="center|center_horizontal"
+                    android:orientation="vertical" >
 
-                <Button
-                    android:id="@+id/btn_goto"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="75dip"
-                    android:layout_height="wrap_content"
-                    android:text="Go..."
-                    android:visibility="visible" />
+                    <Button
+                        android:id="@+id/btn_song"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="75dip"
+                        android:layout_height="wrap_content"
+                        android:text="찬송" />
 
-                <Spinner
-                    android:id="@+id/spinfavo"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="75dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    <Button
+                        android:id="@+id/btn_goto"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="75dip"
+                        android:layout_height="wrap_content"
+                        android:text="Go..."
+                        android:visibility="visible" />
 
-                <Spinner
-                    android:id="@+id/spinbookmark"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="75dip"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="5dip"
-                    android:layout_weight="1" />
+                    <Spinner
+                        android:id="@+id/spinfavo"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="75dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <Spinner
+                        android:id="@+id/spinbookmark"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="75dip"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="5dip"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_above="@+id/linearLayout2"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical" >
+
+                    <Spinner
+                        android:id="@+id/spinbible2"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="75dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <Spinner
+                        android:id="@+id/spinbible"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="75dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <Spinner
+                        android:id="@+id/spinner"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="75dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <Spinner
+                        android:id="@+id/spinner2"
+                        style="?android:attr/buttonStyleSmall"
+                        android:layout_width="75dip"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dip"
+                        android:layout_weight="1" />
+                </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
+            <ImageView
+                android:id="@+id/app_caption"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_above="@+id/linearLayout2"
-                android:layout_alignParentLeft="true"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal" >
-
-                <Spinner
-                    android:id="@+id/spinbible2"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="75dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <Spinner
-                    android:id="@+id/spinbible"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="75dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <Spinner
-                    android:id="@+id/spinner"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="75dip"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <Spinner
-                    android:id="@+id/spinner2"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="75dip"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="5dip"
-                    android:layout_weight="1" />
-            </LinearLayout>
+                android:layout_below="@+id/blank_line1"
+                android:layout_toRightOf="@+id/app_icons"
+                android:adjustViewBounds="true"
+                android:gravity="center"
+                android:maxHeight="50dip"
+                android:maxWidth="300dip"
+                android:scaleType="centerInside"
+                android:src="@drawable/title" />
 
             <ImageView
                 android:id="@+id/logoimg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/app_version"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="69dp"
+                android:layout_alignRight="@+id/app_caption"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="35dp"
                 android:adjustViewBounds="true"
                 android:gravity="center"
                 android:scaleType="centerInside"
                 android:src="@drawable/logo" />
+
         </RelativeLayout>
+
     </LinearLayout>
 
 </FrameLayout>

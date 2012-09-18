@@ -398,37 +398,6 @@ public class BibleMain extends Activity implements OnClickListener {
 
     }
 
-    public class songSelectedListener implements OnItemSelectedListener {
-
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-
-            if (pos <= 0)
-                return;
-
-            Intent intent = new Intent();
-            intent.setClass(BibleMain.this, Song.class);
-
-            if (view.getId() == R.id.spinsong) {
-
-                intent.putExtra("url", "http://bible.c3tv.com/hymn/hymn_text_new.asp?hymn_idx=" + (pos));
-                intent.putExtra("version", 1);
-                intent.putExtra("mSongid", pos);
-
-            } else {
-                intent.putExtra("url", "http://bible.c3tv.com/hymn/hymn_text.asp?hymn_idx=" + (pos));
-                intent.putExtra("version", 2);
-                intent.putExtra("mSongid", pos);
-            }
-
-            startActivity(intent);
-            return;
-        }
-
-        public void onNothingSelected(AdapterView<?> parent) {
-            // Do nothing. 
-        }
-
-    }
 
     public class bookmarkSelectedListener implements OnItemSelectedListener {
 

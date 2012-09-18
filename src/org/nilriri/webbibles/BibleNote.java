@@ -1,8 +1,5 @@
 package org.nilriri.webbibles;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.nilriri.webbibles.com.Prefs;
 import org.nilriri.webbibles.dao.BookmarkDao;
 import org.nilriri.webbibles.dao.Constants.Bookmark;
@@ -20,11 +17,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class BibleNote extends Activity implements OnClickListener {
     private static final String TAG = "BibleNote";
@@ -72,46 +68,6 @@ public class BibleNote extends Activity implements OnClickListener {
         spinner2.setAdapter(adapter_books2);
         spinner2.setOnItemSelectedListener(new newTestmentSelectedListener());
 
-        Spinner spinsong = (Spinner) findViewById(R.id.spinsong);
-        ArrayList<HashMap<String, String>> mList2 = new ArrayList<HashMap<String, String>>();
-
-        for (int i = 0; i < 645; i++) {
-            HashMap<String, String> item2 = new HashMap<String, String>();
-
-            if (i == 0) {
-                item2.put("song", "새 찬송가");
-            } else {
-                item2.put("song", i + "장");
-            }
-            mList2.add(item2);
-        }
-
-        SimpleAdapter adapter_song = new SimpleAdapter(getBaseContext(), mList2, android.R.layout.simple_spinner_item, new String[] { "song" }, new int[] { android.R.id.text1 });
-        adapter_song.setDropDownViewResource(android.R.layout.simple_spinner_item);
-
-        spinsong.setAdapter(adapter_song);
-        spinsong.setOnItemSelectedListener(new songSelectedListener());
-        /////////////////
-        Spinner spinsong2 = (Spinner) findViewById(R.id.spinsong2);
-        ArrayList<HashMap<String, String>> mList22 = new ArrayList<HashMap<String, String>>();
-
-        for (int i = 0; i < 558; i++) {
-            HashMap<String, String> item22 = new HashMap<String, String>();
-
-            if (i == 0) {
-                item22.put("song", "구 찬송가");
-            } else {
-                item22.put("song", i + "장");
-            }
-            mList22.add(item22);
-        }
-
-        SimpleAdapter adapter_song2 = new SimpleAdapter(getBaseContext(), mList22, android.R.layout.simple_spinner_item, new String[] { "song" }, new int[] { android.R.id.text1 });
-        adapter_song2.setDropDownViewResource(android.R.layout.simple_spinner_item);
-
-        spinsong2.setAdapter(adapter_song2);
-        spinsong2.setOnItemSelectedListener(new songSelectedListener());
-        /////////////////
         Spinner spinner3 = (Spinner) findViewById(R.id.spinbookmark);
         spinner3.setOnItemSelectedListener(new bookmarkSelectedListener());
 
@@ -279,38 +235,6 @@ public class BibleNote extends Activity implements OnClickListener {
             startActivity(intent);
 
             spinner.setSelection(0);
-            return;
-        }
-
-        public void onNothingSelected(AdapterView<?> parent) {
-            // Do nothing. 
-        }
-
-    }
-
-    public class songSelectedListener implements OnItemSelectedListener {
-
-        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-
-            if (pos <= 0)
-                return;
-
-            Intent intent = new Intent();
-            intent.setClass(BibleNote.this, Song.class);
-
-            if (view.getId() == R.id.spinsong) {
-
-                intent.putExtra("url", "http://bible.c3tv.com/hymn/hymn_text_new.asp?hymn_idx=" + (pos));
-                intent.putExtra("version", 1);
-                intent.putExtra("mSongid", pos);
-
-            } else {
-                intent.putExtra("url", "http://bible.c3tv.com/hymn/hymn_text.asp?hymn_idx=" + (pos));
-                intent.putExtra("version", 2);
-                intent.putExtra("mSongid", pos);
-            }
-
-            startActivity(intent);
             return;
         }
 
