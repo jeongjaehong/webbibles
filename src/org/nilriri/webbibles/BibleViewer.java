@@ -16,9 +16,9 @@ import org.nilriri.webbibles.com.Common;
 import org.nilriri.webbibles.com.Prefs;
 import org.nilriri.webbibles.dao.BibleDao;
 import org.nilriri.webbibles.dao.BookmarkDao;
-import org.nilriri.webbibles.dao.FavoritesDao;
 import org.nilriri.webbibles.dao.Constants.Bibles;
 import org.nilriri.webbibles.dao.Constants.FavoriteGroup;
+import org.nilriri.webbibles.dao.FavoritesDao;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -39,6 +39,7 @@ import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,13 +47,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -64,8 +66,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class BibleViewer extends Activity implements OnTouchListener, OnClickListener {
 
@@ -1281,7 +1281,7 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
                 if (contents != null) {
 
                     int style = mCursor.getInt(mCursor.getColumnIndexOrThrow("style"));
-                    
+
                     if (style > 0) {
                         try {
 
@@ -1347,9 +1347,7 @@ public class BibleViewer extends Activity implements OnTouchListener, OnClickLis
                 }
 
             }
-
             return v;
-
         }
     }
 
